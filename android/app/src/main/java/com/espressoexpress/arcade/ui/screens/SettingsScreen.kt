@@ -291,7 +291,11 @@ fun SettingsScreen(
                                         }
 
                                         latestVersionName = foundVersion!!
-                                        latestApkUrl = foundApkUrl ?: "https://ais-pre-472yxwq4z56wuftegmr7lu-324319867172.asia-southeast1.run.app/downloads/EspressoExpress.apk"
+                                        latestApkUrl = if (foundApkUrl.isNullOrEmpty() || foundApkUrl.contains("ais-pre-") || foundApkUrl.contains("asia-southeast1.run.app")) {
+                                             "https://github.com/karmapatel/Espresso-Express/releases/tag/v$latestVersionName"
+                                         } else {
+                                             foundApkUrl
+                                         }
 
                                         if (compareVersions(latestVersionName, currentVersionName) > 0) {
                                             updateState = UpdateState.UPDATE_AVAILABLE
@@ -464,7 +468,11 @@ fun SettingsScreen(
                                             }
 
                                             latestVersionName = foundVersion!!
-                                            latestApkUrl = foundApkUrl ?: "https://ais-pre-472yxwq4z56wuftegmr7lu-324319867172.asia-southeast1.run.app/downloads/EspressoExpress.apk"
+                                            latestApkUrl = if (foundApkUrl.isNullOrEmpty() || foundApkUrl.contains("ais-pre-") || foundApkUrl.contains("asia-southeast1.run.app")) {
+                                             "https://github.com/karmapatel/Espresso-Express/releases/tag/v$latestVersionName"
+                                         } else {
+                                             foundApkUrl
+                                         }
 
                                             if (compareVersions(latestVersionName, currentVersionName) > 0) {
                                                 updateState = UpdateState.UPDATE_AVAILABLE
