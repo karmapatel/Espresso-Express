@@ -4,6 +4,13 @@ An adrenaline-pumping 2D mobile arcade coffee shop simulator set on a bustling s
 
 ---
 
+## 📢 What's New in v1.1.3
+- **🔒 Secure In-App Updater**: Redirects users to official GitHub Releases for secure APK downloads, bypassing sandbox iframe/session restrictions.
+- **🔄 Semantic Release Sync**: The landing page dynamically compares versions to prevent downgrades while automatically pulling the latest `.apk` assets from GitHub.
+- **📱 Fully Tuned Android Client**: Optimized for native touch devices with responsive screen layouts.
+
+---
+
 ## 🎮 Features
 
 - **📱 Mobile-First Native Phone Emulation**: Tailored for Android/iOS mobile gameplay with simulated notch, status bar, and gesture navigation pill.
