@@ -76,12 +76,12 @@ jobs:
           LATEST_TAG=$(git tag -l "v*" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n1 || echo "")
           echo "Latest tag found: $LATEST_TAG"
           if [ -z "$LATEST_TAG" ]; then
-            NEW_TAG="v1.1.4"
+            NEW_TAG="v1.1.5"
           else
             VERSION=${LATEST_TAG#v}
             IFS='.' read -r major minor patch <<< "$VERSION"
             if [ "$major" -eq 1 ] && [ "$minor" -eq 0 ]; then
-              NEW_TAG="v1.1.4"
+              NEW_TAG="v1.1.5"
             else
               NEW_PATCH=$((patch + 1))
               NEW_TAG="v${major}.${minor}.${NEW_PATCH}"

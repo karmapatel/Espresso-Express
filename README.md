@@ -1,69 +1,100 @@
-# ☕ Espresso Express - 2D Mobile Arcade Game
+# ☕ Espresso Express — 2D Mobile Arcade Game
 
-An adrenaline-pumping 2D mobile arcade coffee shop simulator set on a bustling subway platform (Platform 9 / Grand Central Depot). Brew fast, manage rush-hour queues, steam milk, dispense syrups, and deliver caffeinated perfection to impatient commuters before their trains depart!
+<p align="center">
+  <img src="public/assets/hero-banner-x9Xoeutx.jpg" alt="Espresso Express Hero Banner" width="100%" style="border-radius: 12px; max-width: 800px;" />
+</p>
 
----
-
-## 📢 What's New in v1.1.4
-- **🔒 Secure In-App Updater**: Redirects users to official GitHub Releases for secure APK downloads, bypassing sandbox iframe/session restrictions.
-- **🔄 Semantic Release Sync**: The landing page dynamically compares versions to prevent downgrades while automatically pulling the latest `.apk` assets from GitHub.
-- **📱 Fully Tuned Android Client**: Optimized for native touch devices with responsive screen layouts.
-
----
-
-## 🎮 Features
-
-- **📱 Mobile-First Native Phone Emulation**: Tailored for Android/iOS mobile gameplay with simulated notch, status bar, and gesture navigation pill.
-- **⚡ Rush Hour Overdrive**: Timed rush waves, train countdown timers, urgency audio/visual indicators, and rush gratuity multipliers.
-- **☕ 5-Station Interactive Workstation**:
-  1. **Grind**: Bean hopper & titanium burr grinder.
-  2. **Brew**: 2-Group commercial espresso machine with pressure gauge and active steam.
-  3. **Milk**: Chilled whole and barista oat milk fridge with high-pressure steaming wand.
-  4. **Syrup**: Flavor dispensers for Caramel, French Vanilla, and Dark Mocha.
-  5. **Cup/Ice**: 16oz to-go cup dispenser and rapid chiller ice well.
-- **👥 Dynamic Commuter Queue**: Unique commuter archetypes (impatient business travelers, sleepy night-shift workers, student influencers, etc.) with animated speech bubbles and recipe tickets.
-- **📋 Recipe Inspection Modal**: Real-time recipe specifications (cup size, shot counts, milk type, flavor pumps, temperature, and commuter notes) constrained perfectly within the mobile display.
-- **⚙️ Upgrades & Gear Store**: Multi-tier equipment upgrades, ingredients, aprons, call bells, and station perks.
-- **📊 Shift Performance Summary**: Rating grades (S/A/B), golden coffee bean rewards, combo stats, and detailed financial shift earnings statement.
-- **🎛️ Settings & Customization**: Granular audio controls (Master, Subway Lo-Fi BGM, Steam & Grinder SFX), haptic feedback, and train rumble screen shake toggles.
+<p align="center">
+  <a href="https://github.com/karmapatel/Espresso-Express/releases"><img src="https://img.shields.io/badge/Release-v1.1.5-brightgreen?style=for-the-badge&logo=github" alt="Current Release" /></a>
+  <img src="https://img.shields.io/badge/Platform-Android%20%7C%20Web-blue?style=for-the-badge&logo=android" alt="Supported Platforms" />
+  <img src="https://img.shields.io/badge/Build-Passing-success?style=for-the-badge&logo=github-actions" alt="Build Status" />
+  <img src="https://img.shields.io/badge/License-MIT-orange?style=for-the-badge" alt="License" />
+</p>
 
 ---
 
-## 🛠️ Tech Stack
+### 📢 What's New in v1.1.5
+* **⚡ Instant In-App Automatic Downloads**: No more hunting on releases list pages! The update engine triggers background downloads immediately to retrieve the latest version cleanly.
+* **🔒 Secure & Seamless Upgrades**: Integrates a client-side update framework that auto-detects the active repository structure to prevent installation downgrades.
+* **📱 High-Fidelity Mobile Simulation**: Custom touch controls optimized for native Android devices alongside a visual status bar and navigation indicators.
 
-- **Framework**: Vite + Vanilla JavaScript (ES Modules)
-- **Styling**: Vanilla CSS (Custom Design System, Tokens, Keyframe Animations, Glassmorphism, Responsive Mobile Frame Containment)
-- **Fonts**: Fredoka, Bungee, Nunito
+---
+
+## 🎯 About The Game
+
+An adrenaline-pumping, 2D mobile arcade coffee-shop simulator set on a bustling subway platform (**Platform 9 / Grand Central Depot**). Brew fast, manage rush-hour queues, steam milk, dispense syrups, and deliver caffeinated perfection to impatient commuters before their trains depart!
+
+---
+
+## 🎮 Immersive Gameplay Features
+
+### ☕ 5-Station Interactive Workstation
+1. 🎛️ **Grind Station**: Manage the bean hopper level and trigger the high-speed titanium burr grinder.
+2. 🚰 **Brew Station**: Extract rich espresso shots using a commercial 2-Group machine, keeping an eye on active pressure meters.
+3. 🥛 **Milk Station**: Steam organic whole and barista-grade oat milk using the high-pressure steaming wand to perfect froth levels.
+4. 🍯 **Syrup Station**: Dispense custom flavor profiles featuring Caramel, French Vanilla, and Dark Mocha pumps.
+5. 🧊 **Cup & Ice Station**: Dispense size-accurate cups (12oz / 16oz) and instantly cool special iced formulations.
+
+### 👥 Dynamic Commuter Queue
+Meet unique passenger types rushing for their train:
+* **Business Execs**: Highly impatient, heavy tip potential, short patience thresholds.
+* **Night-Shift Workers**: Sleepy, requesting extra espresso shots.
+* **Student Influencers**: Demanding intricate flavor syrup and oat milk modifications.
+
+### ⚙️ Upgrades & Perks Shop
+Spend earned Golden Coffee Beans on:
+* **Automatic Grind & Steaming Accessories**
+* **Call Bells** to summon additional customers
+* **Gourmet Syrups** & custom barista aprons to maximize tip multipliers
+
+---
+
+## 🛠️ Technology Stack
+
+```
+┌────────────────────────────────────────────────────────┐
+│                      FRONTEND ENGINE                   │
+│  Vite (v6) + ES Modules + Tailwind CSS + Vanilla JS    │
+└───────────────────────────┬────────────────────────────┘
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│                   NATIVE ANDROID CONTAINER             │
+│   Jetpack Compose + WebKit WebView + Kotlin Coroutines  │
+└────────────────────────────────────────────────────────┘
+```
+
+* **Frontend Build System**: Vite 6, JavaScript (ES Modules)
+* **Styling & Presentation**: Responsive utility layout with glassmorphism, animated keyframes, and full screen-width mobile encapsulation.
+* **Native Android Core**: Android SDK (API 26-34), Jetpack Compose, Kotlin Coroutines, Kotlin Serialization, and custom In-App Update intent APIs.
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
+* **Node.js** (v18.0.0 or higher)
+* **Android Studio** (for native client builds)
 
-- Node.js (v18 or higher)
-- npm / pnpm / yarn
-
-### Installation
+### Quick Start (Web)
 
 ```bash
-# Clone repository
+# Clone the repository
 git clone https://github.com/karmapatel/Espresso-Express.git
 
-# Navigate to project directory
+# Navigate into directory
 cd Espresso-Express
 
 # Install dependencies
 npm install
 
-# Start local development server
+# Start local server
 npm run dev
 ```
 
-Visit `http://localhost:3000/` in your browser.
+Visit **`http://localhost:3000/`** to experience the game directly in your browser.
 
-### Production Build
-
+### APK Compilation
+To package the app's hybrid build into a ready-to-run `.apk`:
 ```bash
 npm run build
 ```
@@ -71,5 +102,4 @@ npm run build
 ---
 
 ## 📄 License
-
-MIT License
+Distributed under the **MIT License**. See `LICENSE` for more information.
