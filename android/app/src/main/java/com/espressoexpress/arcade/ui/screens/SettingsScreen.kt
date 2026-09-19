@@ -291,10 +291,11 @@ fun SettingsScreen(
                                         }
 
                                         latestVersionName = foundVersion!!
-                                        latestApkUrl = if (foundApkUrl.isNullOrEmpty() || foundApkUrl.contains("ais-pre-") || foundApkUrl.contains("asia-southeast1.run.app")) {
+                                        val urlVal = foundApkUrl
+                                        latestApkUrl = if (urlVal.isNullOrEmpty() || urlVal.contains("ais-pre-") || urlVal.contains("asia-southeast1.run.app")) {
                                              "https://github.com/karmapatel/Espresso-Express/releases/tag/v$latestVersionName"
                                          } else {
-                                             foundApkUrl
+                                             urlVal
                                          }
 
                                         if (compareVersions(latestVersionName, currentVersionName) > 0) {
@@ -468,10 +469,11 @@ fun SettingsScreen(
                                             }
 
                                             latestVersionName = foundVersion!!
-                                            latestApkUrl = if (foundApkUrl.isNullOrEmpty() || foundApkUrl.contains("ais-pre-") || foundApkUrl.contains("asia-southeast1.run.app")) {
+                                            val urlVal = foundApkUrl
+                                            latestApkUrl = if (urlVal.isNullOrEmpty() || urlVal.contains("ais-pre-") || urlVal.contains("asia-southeast1.run.app")) {
                                              "https://github.com/karmapatel/Espresso-Express/releases/tag/v$latestVersionName"
                                          } else {
-                                             foundApkUrl
+                                             urlVal
                                          }
 
                                             if (compareVersions(latestVersionName, currentVersionName) > 0) {
