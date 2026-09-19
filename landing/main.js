@@ -1,5 +1,5 @@
 /* ========================================================================= */
-/* ESPRESSO EXPRESS - LANDING PAGE INTERACTIVITY                             */
+/* ESPRESSO EXPRESS - LANDING PAGE INTERACTIVITY (APK DISTRIBUTION)          */
 /* ========================================================================= */
 
 // Data for the 5 Workstations
@@ -133,7 +133,7 @@ function initMobileMenu() {
 }
 
 /* ------------------------------------------------------------------------- */
-/* 3. DOWNLOAD BUTTONS INTERACTION & TOAST                                   */
+/* 3. DOWNLOAD APK BUTTONS & TOAST NOTIFICATION                              */
 /* ------------------------------------------------------------------------- */
 function initDownloadButtons() {
   const downloadButtons = [
@@ -144,12 +144,12 @@ function initDownloadButtons() {
 
   downloadButtons.forEach(btn => {
     btn.addEventListener('click', () => {
-      showToast('⚡ Starting download: EspressoExpress.apk (v1.0.0)... See you on Platform 9!', '☕');
+      showToast('downloading...', '📦');
     });
   });
 }
 
-function showToast(message, icon = '☕') {
+function showToast(message, icon = '📦') {
   const container = document.getElementById('toastOverlay');
   if (!container) return;
 
@@ -169,7 +169,7 @@ function showToast(message, icon = '☕') {
         card.parentNode.removeChild(card);
       }
     }, 300);
-  }, 4000);
+  }, 4500);
 }
 
 /* ------------------------------------------------------------------------- */

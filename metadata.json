@@ -1,6 +1,6 @@
 {
   "name": "Espresso Express",
-  "description": "2D Mobile Arcade Game",
+  "description": "Espresso Express - Official 2D Mobile Arcade Android APK Distribution",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

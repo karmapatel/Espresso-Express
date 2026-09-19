@@ -5,11 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3000",
-    "build": "vite build",
-    "lint": "vite build",
+    "build": "node scripts/build-apk.js && vite build",
+    "lint": "node scripts/build-apk.js && vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^6.2.0"
+    "archiver": "^8.0.0",
+    "sharp": "^0.35.4",
+    "vite": "^6.2.0",
+    "vite-plugin-pwa": "^1.3.0"
   }
 }
