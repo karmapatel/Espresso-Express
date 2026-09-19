@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Solid Background (Warm espresso tone) -->
+    <path
+        android:fillColor="#111827"
+        android:pathData="M0,0h108v108h-108z" />
+    
+    <!-- Outer Golden Accent Circular Ring -->
+    <path
+        android:fillColor="#D97706"
+        android:pathData="M54,18 A36,36 0 1,0 90,54 A36,36 0 0,0 54,18 Z M54,84 A30,30 0 1,1 84,54 A30,30 0 0,1 54,84 Z" />
+
+    <!-- Coffee Cup Outline -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M38,44 h24 a2,2 0 0,1 2,2 v10 a12,12 0 0,1 -12,12 h-0 a12,12 0 0,1 -12,-12 v-10 a2,2 0 0,1 2,-2 z" />
+    
+    <!-- Coffee Cup Handle -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M64,48 h4 a2,2 0 0,1 2,2 v4 a2,2 0 0,1 -2,2 h-4 z M64,51 v2 h3 v-2 h-3 z" />
+
+    <!-- Coffee steam wave 1 -->
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M44,38 c1,-2 -1,-4 0,-6 c1,-2 1,-2 0,-4 h2 c1,2 -1,4 0,6 c1,2 -1,2 0,4 z" />
+
+    <!-- Coffee steam wave 2 -->
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M50,38 c1,-2 -1,-4 0,-6 c1,-2 1,-2 0,-4 h2 c1,2 -1,4 0,6 c1,2 -1,2 0,4 z" />
+</vector>
