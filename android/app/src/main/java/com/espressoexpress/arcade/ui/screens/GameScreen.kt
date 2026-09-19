@@ -42,8 +42,7 @@ fun GameScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(DarkSurface)
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-                    .border(bottom = 1.dp, color = BorderMetal),
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -98,6 +97,8 @@ fun GameScreen(
                     )
                 }
             }
+
+            Divider(color = BorderMetal, thickness = 1.dp)
 
             // CHAOS LEVEL METER
             Column(modifier = Modifier.fillMaxWidth().background(Color(0xFF0C091A)).padding(horizontal = 16.dp, vertical = 4.dp)) {
