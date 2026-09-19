@@ -29,6 +29,15 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
+      - name: Accept Android SDK Licenses
+        run: |
+          # Accept licenses using any available sdkmanager bin in common paths
+          yes | sdkmanager --licenses || true
+          if [ -n "$ANDROID_HOME" ]; then
+            yes | "$ANDROID_HOME"/cmdline-tools/latest/bin/sdkmanager --licenses || true
+            yes | "$ANDROID_HOME"/tools/bin/sdkmanager --licenses || true
+          fi
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
