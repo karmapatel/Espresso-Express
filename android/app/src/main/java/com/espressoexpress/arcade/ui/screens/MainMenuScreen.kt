@@ -37,7 +37,7 @@ fun MainMenuScreen(
         initialValue = 0f,
         targetValue = -6f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1200, easing = EaseInOutSine),
+            animation = tween(1200, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "CupBounce"
@@ -47,7 +47,7 @@ fun MainMenuScreen(
         initialValue = 0.2f,
         targetValue = 0.9f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1400, easing = EaseInOutSine),
+            animation = tween(1400, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "Steam1Alpha"
@@ -57,7 +57,7 @@ fun MainMenuScreen(
         initialValue = 4f,
         targetValue = -12f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1800, easing = EaseLinear),
+            animation = tween(1800, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         ),
         label = "Steam2Y"

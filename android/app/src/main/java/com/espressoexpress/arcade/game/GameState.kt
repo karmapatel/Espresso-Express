@@ -11,30 +11,103 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 import kotlin.random.Random
+
+data class DrinkRecipe(
+    val id: String,
+    val name: String,
+    val size: String,
+    val shots: Int,
+    val milk: String, // "None", "Whole Milk", "Oat Milk"
+    val frothed: Boolean,
+    val syrupFlavor: String, // "None", "Caramel", "Vanilla", "Mocha"
+    val syrupPumps: Int,
+    val iceCount: Int, // 0, 1, 2, 3
+    val hasWater: Boolean,
+    val basePrice: Double,
+    val prepDescription: String
+)
+
+val DRINK_RECIPES = listOf(
+    DrinkRecipe("espresso", "Single Espresso", "Small", 1, "None", false, "None", 0, 0, false, 3.50, "1x Espresso shot in Small cup"),
+    DrinkRecipe("double_espresso", "Double Espresso", "Small", 2, "None", false, "None", 0, 0, false, 4.75, "Double shot espresso in Small cup"),
+    DrinkRecipe("triple_espresso", "Triple Espresso", "Small", 3, "None", false, "None", 0, 0, false, 5.75, "3x Espresso shots in Small cup"),
+    DrinkRecipe("quad_shot", "Quad Overdrive", "Medium", 4, "None", false, "None", 0, 0, false, 6.50, "4x Espresso shots in Medium cup"),
+    DrinkRecipe("americano", "Americano", "Medium", 2, "None", false, "None", 0, 0, true, 4.50, "Double espresso + Hot Water in Medium cup"),
+    DrinkRecipe("large_americano", "Large Americano", "Large", 3, "None", false, "None", 0, 0, true, 5.50, "3x Espresso shots + Hot Water in Large cup"),
+    DrinkRecipe("iced_americano", "Iced Americano", "Medium", 2, "None", false, "None", 0, 2, true, 4.75, "Ice + Double espresso + Water in Medium cup"),
+    DrinkRecipe("latte", "Whole Milk Latte", "Large", 2, "Whole Milk", true, "None", 0, 0, false, 5.75, "Double espresso + Steamed Whole Milk"),
+    DrinkRecipe("small_latte", "Small Latte", "Small", 1, "Whole Milk", true, "None", 0, 0, false, 4.75, "Single espresso + Steamed Whole Milk"),
+    DrinkRecipe("iced_latte", "Iced Latte", "Medium", 2, "Whole Milk", false, "None", 0, 2, false, 5.50, "Ice + Whole Milk + 2 Shots in Medium cup"),
+    DrinkRecipe("oat_latte", "Oat Milk Latte", "Large", 2, "Oat Milk", true, "None", 0, 0, false, 6.25, "Double espresso + Steamed Oat Milk"),
+    DrinkRecipe("small_oat_latte", "Small Oat Latte", "Small", 1, "Oat Milk", true, "None", 0, 0, false, 5.25, "1 Shot + Steamed Oat Milk in Small cup"),
+    DrinkRecipe("iced_oat_latte", "Iced Oat Latte", "Medium", 2, "Oat Milk", false, "None", 0, 2, false, 6.25, "Ice + Oat Milk + 2 Shots in Medium cup"),
+    DrinkRecipe("caramel_latte", "Caramel Latte", "Medium", 1, "Whole Milk", true, "Caramel", 1, 0, false, 6.00, "1x Caramel + 1 Shot + Steamed Whole Milk"),
+    DrinkRecipe("caramel_macchiato", "Caramel Macchiato", "Large", 2, "Whole Milk", true, "Caramel", 2, 0, false, 6.75, "2x Caramel pumps + Steamed Whole Milk + 2 Shots"),
+    DrinkRecipe("iced_caramel_macchiato", "Iced Caramel Macchiato", "Large", 2, "Whole Milk", false, "Caramel", 2, 2, false, 7.25, "Ice + 2x Caramel + Whole Milk + 2 Shots"),
+    DrinkRecipe("vanilla_latte", "Vanilla Latte", "Medium", 2, "Whole Milk", true, "Vanilla", 1, 0, false, 6.25, "1x Vanilla + 2 Shots + Steamed Whole Milk"),
+    DrinkRecipe("iced_vanilla_oat", "Iced Vanilla Oat Latte", "Large", 2, "Oat Milk", false, "Vanilla", 2, 2, false, 7.25, "Ice + 2x Vanilla + Oat Milk + 2 Shots"),
+    DrinkRecipe("dark_mocha", "Dark Mocha", "Large", 2, "Whole Milk", true, "Mocha", 2, 0, false, 6.50, "2x Mocha + 2 Shots + Steamed Whole Milk"),
+    DrinkRecipe("sweet_mocha", "Sweet Mocha", "Medium", 1, "Whole Milk", true, "Mocha", 1, 0, false, 6.00, "1x Mocha + 1 Shot + Steamed Whole Milk"),
+    DrinkRecipe("iced_mocha", "Iced Mocha", "Medium", 2, "Whole Milk", false, "Mocha", 1, 2, false, 6.50, "Ice + 1x Mocha + Whole Milk + 2 Shots"),
+    DrinkRecipe("triple_oat_mocha", "Triple Oat Mocha", "Large", 3, "Oat Milk", true, "Mocha", 2, 0, false, 7.50, "2x Mocha + 3 Shots + Steamed Oat Milk"),
+    DrinkRecipe("iced_vanilla_shot", "Iced Vanilla Espresso", "Small", 2, "None", false, "Vanilla", 1, 2, false, 5.00, "Ice + 1x Vanilla + 2 Shots in Small cup"),
+    DrinkRecipe("caramel_espresso", "Caramel Espresso", "Small", 1, "None", false, "Caramel", 1, 0, false, 4.25, "1x Caramel + 1 Shot in Small cup")
+)
+
+data class CommuterArchetype(
+    val type: String,
+    val name: String,
+    val avatar: String,
+    val notes: String
+)
+
+val COMMUTER_ARCHETYPES = listOf(
+    CommuterArchetype("Wall Street Exec", "Frank Vance", "💼", "Heading to trading desk. Train leaves right now!"),
+    CommuterArchetype("Night-Shift Nurse", "Maya Lin", "🥱", "Heading home after a 12h hospital shift... need caffeine."),
+    CommuterArchetype("Campus Influencer", "Jax Rivera", "📱", "Keep it iced and sweet! Soundcheck at 8th Ave station."),
+    CommuterArchetype("Line Conductor", "Officer Pete", "🚂", "Highballing on Track 3 in 2 minutes! Quick black coffee!"),
+    CommuterArchetype("Tech Lead", "Siddharth R.", "💻", "Sprint review at 9:00 AM sharp. Need extra caffeine!"),
+    CommuterArchetype("Art Student", "Chloe V.", "🎨", "Rich chocolate mocha please, got a portfolio review."),
+    CommuterArchetype("Lead Architect", "Nadia Thorne", "📐", "Blueprints under my arm, client meeting in 15 minutes."),
+    CommuterArchetype("Biotech Researcher", "Dr. Elena Rossi", "🔬", "Lab notes due this morning. Extra strong espresso!"),
+    CommuterArchetype("Manga Illustrator", "Kenji Sato", "✏️", "Need sweet iced fuel for drawing all day."),
+    CommuterArchetype("Broadway Stagehand", "Marcus Brody", "🎭", "Hauling lighting rigs for the matinee show today.")
+)
 
 data class OrderTicket(
     val id: Int,
     val customerName: String,
-    val customerType: String, // "Wall Street Exec", "Night-Shift Nurse", "Campus Influencer", "Line Conductor"
+    val customerType: String,
     val avatar: String,
+    val drinkId: String,
     val drinkName: String,
-    val size: String, // "Small", "Medium", "Large"
-    val shots: Int, // 1 or 2
-    val milk: String, // "Whole Milk", "Oat Milk", "None"
-    val syrup: String, // "Caramel", "Vanilla", "Mocha", "None"
+    val size: String,
+    val shots: Int,
+    val milk: String,
+    val frothed: Boolean,
+    val syrup: String,
+    val syrupFlavor: String,
+    val syrupPumps: Int,
+    val iceCount: Int,
     val hasIce: Boolean,
-    var patience: Float = 1.0f, // 1.0 down to 0.0
-    val maxPatienceSec: Int = 30
+    val hasWater: Boolean,
+    val price: Double,
+    val tipBonus: Double,
+    var patience: Float = 1.0f,
+    val maxPatienceSec: Int = 30,
+    val prepDescription: String,
+    val notes: String
 )
 
 data class Workbench(
-    var currentCupSize: String = "None", // "None", "Small", "Medium", "Large"
+    var currentCupSize: String = "None",
     var hasGrinds: Boolean = false,
     var brewedShots: Int = 0,
-    var milkType: String = "None", // "None", "Whole Milk", "Oat Milk"
+    var milkType: String = "None",
     var milkSteamed: Boolean = false,
-    var syrupType: String = "None", // "None", "Caramel", "Vanilla", "Mocha"
+    var syrupType: String = "None",
     var syrupPumps: Int = 0,
     var iceScoops: Int = 0,
     var hasSpill: Boolean = false
@@ -68,7 +141,6 @@ class GameState(
     private val saveManager: SaveManager,
     private val scope: CoroutineScope
 ) {
-    // Save-backed states
     var totalEarnings by mutableStateOf(0.0)
     var level by mutableStateOf(1)
     var highestCombo by mutableStateOf(0)
@@ -77,26 +149,24 @@ class GameState(
     val unlockedEquipment = mutableStateListOf<String>()
     var settings by mutableStateOf(GameSettings())
 
-    // Active shift stats
     var isShiftActive by mutableStateOf(false)
     var isRushActive by mutableStateOf(false)
     var shiftEarnings by mutableStateOf(0.0)
     var shiftComboStreak by mutableStateOf(0)
-    var shiftChaosLevel by mutableStateOf(0.0f) // 0f to 100f
+    var shiftChaosLevel by mutableStateOf(0.0f)
     var trainSecondsLeft by mutableStateOf(25)
     var activeOrders = mutableStateListOf<OrderTicket>()
     var selectedOrderId by mutableStateOf<Int?>(null)
     var workbench by mutableStateOf(Workbench())
-    var activeToasts = mutableStateListOf<Pair<String, String>>() // Message to Symbol
+    var activeToasts = mutableStateListOf<Pair<String, String>>()
 
-    // Shift result details for Results Screen
     var lastShiftCompletedOrders by mutableStateOf(0)
     var lastShiftSpills by mutableStateOf(0)
     var lastShiftTips by mutableStateOf(0.0)
     var lastShiftGrade by mutableStateOf("B")
 
     private var gameLoopRunning = false
-    private var orderIdCounter = 1
+    private var orderIdCounter = 101
 
     fun loadSavedData() {
         scope.launch {
@@ -152,7 +222,7 @@ class GameState(
         lastShiftSpills = 0
         lastShiftTips = 0.0
         
-        orderIdCounter = 1
+        orderIdCounter = 101
         spawnOrder()
         spawnOrder()
 
@@ -166,7 +236,6 @@ class GameState(
         isShiftActive = false
         gameLoopRunning = false
         
-        // Calculate Shift Grade
         val accuracy = if (lastShiftCompletedOrders + lastShiftSpills > 0) {
             lastShiftCompletedOrders.toFloat() / (lastShiftCompletedOrders + lastShiftSpills)
         } else {
@@ -179,14 +248,12 @@ class GameState(
             else -> "C"
         }
 
-        // Add to permanent totals
         totalEarnings += shiftEarnings
         customersServed += lastShiftCompletedOrders
         if (shiftComboStreak > highestCombo) {
             highestCombo = shiftComboStreak
         }
         
-        // Level progression check
         if (customersServed >= level * 5) {
             level++
             triggerToast("LEVEL UP! NOW LEVEL $level!", "⭐️")
@@ -202,7 +269,6 @@ class GameState(
                 delay(1000)
                 if (!isShiftActive) break
 
-                // Countdown train timer
                 if (trainSecondsLeft > 1) {
                     trainSecondsLeft--
                 } else {
@@ -210,7 +276,6 @@ class GameState(
                     triggerTrainRush()
                 }
 
-                // Tick patience on all orders
                 val iterator = activeOrders.iterator()
                 while (iterator.hasNext()) {
                     val order = iterator.next()
@@ -223,7 +288,6 @@ class GameState(
                     }
                 }
 
-                // Periodically spawn new customers
                 if (activeOrders.size < 4 && Random.nextFloat() < 0.25f) {
                     spawnOrder()
                 }
@@ -242,35 +306,61 @@ class GameState(
     }
 
     private fun spawnOrder() {
-        val names = listOf("Alex", "Jordan", "Taylor", "Casey", "Morgan", "Robin", "Pat")
-        val types = listOf(
-            Triple("Wall Street Exec", "💼", 25),
-            Triple("Night-Shift Nurse", "🥱", 40),
-            Triple("Campus Influencer", "📱", 30),
-            Triple("Line Conductor", "🚂", 20)
-        )
-        val selectedType = types.random()
-        val size = listOf("Small", "Medium", "Large").random()
-        val drinks = unlockedDrinks.ifEmpty { listOf("Espresso", "Americano", "Latte") }
-        val drink = drinks.random()
-        val shots = if (size == "Large" || drink == "Double Shot") 2 else 1
-        val milk = if (drink == "Latte" || drink == "Flat White") listOf("Whole Milk", "Oat Milk").random() else "None"
-        val syrup = if (Random.nextFloat() < 0.5f && drink != "Espresso") listOf("Caramel", "Vanilla", "Mocha").random() else "None"
-        val ice = drink.startsWith("Iced") || Random.nextFloat() < 0.3f
+        val archetype = COMMUTER_ARCHETYPES.random()
+        
+        val availableRecipes = DRINK_RECIPES.filter { recipe ->
+            val hasOatUnlock = unlockedEquipment.contains("OatMilk")
+            val hasVanillaUnlock = unlockedEquipment.contains("VanillaSyrup")
+            val hasMochaUnlock = unlockedEquipment.contains("MochaSyrup")
+
+            val milkOk = recipe.milk != "Oat Milk" || hasOatUnlock
+            val syrupOk = (recipe.syrupFlavor != "Vanilla" || hasVanillaUnlock) &&
+                          (recipe.syrupFlavor != "Mocha" || hasMochaUnlock)
+            milkOk && syrupOk
+        }
+
+        val chosenRecipe = if (availableRecipes.isNotEmpty()) availableRecipes.random() else DRINK_RECIPES.first()
+
+        val syrupLabel = if (chosenRecipe.syrupFlavor == "None") "None" else "${chosenRecipe.syrupFlavor} (${chosenRecipe.syrupPumps}x)"
+        
+        val hasCustomerTip = Random.nextFloat() < 0.52f
+        val customerTip = if (hasCustomerTip) listOf(1.00, 1.25, 1.50, 1.75, 2.00, 2.50).random() else 0.00
+
+        var note = archetype.notes
+        var prepText = chosenRecipe.prepDescription
+        if (chosenRecipe.iceCount > 0) {
+            val iceText = when (chosenRecipe.iceCount) {
+                1 -> "Light Ice (1x Scoop)"
+                2 -> "Regular Ice (2x Scoops)"
+                else -> "Extra Ice (3x Scoops)"
+            }
+            note = "$note Please add $iceText!"
+            prepText = "$iceText + $prepText"
+        }
 
         val ticket = OrderTicket(
             id = orderIdCounter++,
-            customerName = names.random(),
-            customerType = selectedType.first,
-            avatar = selectedType.second,
-            drinkName = drink,
-            size = size,
-            shots = shots,
-            milk = milk,
-            syrup = syrup,
-            hasIce = ice,
-            maxPatienceSec = selectedType.third
+            customerName = archetype.name,
+            customerType = archetype.type,
+            avatar = archetype.avatar,
+            drinkId = chosenRecipe.id,
+            drinkName = chosenRecipe.name,
+            size = chosenRecipe.size,
+            shots = chosenRecipe.shots,
+            milk = chosenRecipe.milk,
+            frothed = chosenRecipe.frothed,
+            syrup = syrupLabel,
+            syrupFlavor = chosenRecipe.syrupFlavor,
+            syrupPumps = chosenRecipe.syrupPumps,
+            iceCount = chosenRecipe.iceCount,
+            hasIce = chosenRecipe.iceCount > 0,
+            hasWater = chosenRecipe.hasWater,
+            price = chosenRecipe.basePrice,
+            tipBonus = customerTip,
+            prepDescription = prepText,
+            notes = note
         )
+
         activeOrders.add(ticket)
         if (selectedOrderId == null) {
             selectedOrderId = ticket.id
@@ -287,7 +377,6 @@ class GameState(
         triggerToast("ORDER EXPIRED! ${order.customerName} missed their train!", "⚠️")
     }
 
-    // Interactive counter actions
     fun grabCup(size: String) {
         if (workbench.hasSpill) {
             triggerToast("⚠️ Clean the counter spill first!", "🧽")
@@ -376,52 +465,161 @@ class GameState(
             return
         }
 
-        // Simple match evaluation
-        var scoreMatch = 0
-        if (workbench.currentCupSize == order.size) scoreMatch++
-        if (workbench.brewedShots >= order.shots) scoreMatch++
-        
-        // Milk matching
-        if (order.milk == "None" && workbench.milkType == "None") scoreMatch++
-        if (order.milk != "None" && workbench.milkType == order.milk && workbench.milkSteamed) scoreMatch++
+        var penalty = 0
+        val details = mutableListOf<String>()
 
-        // Syrup matching
-        if (order.syrup == "None" && workbench.syrupType == "None") scoreMatch++
-        if (order.syrup != "None" && workbench.syrupType == order.syrup) scoreMatch++
+        // 1. Cup Size
+        if (workbench.currentCupSize != order.size) {
+            penalty += 15
+            details.add("Wrong size cup (${workbench.currentCupSize} vs ${order.size})")
+        }
 
-        // Ice matching
-        if (order.hasIce == (workbench.iceScoops > 0)) scoreMatch++
+        // 2. Shots
+        val shotDiff = abs(workbench.brewedShots - order.shots)
+        if (workbench.brewedShots == 0) {
+            penalty += 45
+            details.add("No espresso shots pulled")
+        } else if (shotDiff > 0) {
+            penalty += shotDiff * 30
+            details.add("Wrong shots (${workbench.brewedShots} vs ${order.shots})")
+        }
 
-        val totalPossible = 5
-        val accuracy = scoreMatch.toFloat() / totalPossible
+        // 3. Milk type
+        val targetNeedsMilk = order.milk != "None"
+        val prepHasMilk = workbench.milkType != "None" && workbench.milkType != "Water"
+        if (targetNeedsMilk && !prepHasMilk) {
+            penalty += 25
+            details.add("Missing milk (${order.milk})")
+        } else if (!targetNeedsMilk && prepHasMilk) {
+            penalty += 25
+            details.add("Unwanted milk added")
+        } else if (targetNeedsMilk && prepHasMilk && workbench.milkType != order.milk) {
+            penalty += 15
+            details.add("Used ${workbench.milkType} instead of ${order.milk}")
+        }
 
-        if (accuracy >= 0.6f) {
-            // Successful serve!
-            lastShiftCompletedOrders++
-            val basePrice = when (order.size) {
-                "Small" -> 3.50
-                "Medium" -> 4.50
-                else -> 5.50
+        // 4. Froth / Steaming
+        val isOrderIced = order.iceCount > 0
+        if (order.frothed && !workbench.milkSteamed) {
+            penalty += 20
+            details.add("Milk not frothed/steamed")
+        } else if (!order.frothed && workbench.milkSteamed) {
+            if (isOrderIced) {
+                penalty += 30
+                details.add("Poured hot frothed milk into iced drink (melted!)")
+            } else if (targetNeedsMilk) {
+                penalty += 20
+                details.add("Milk frothed when unsteamed was requested")
+            } else {
+                penalty += 25
+                details.add("Unwanted steamed foam added")
             }
-            val patienceBonus = (order.patience * 1.50)
-            val comboBonus = if (shiftComboStreak > 1) shiftComboStreak * 0.20 else 0.0
-            val profit = basePrice + patienceBonus + comboBonus
+        }
+
+        // 5. Water
+        val prepHasWater = workbench.milkType == "Water"
+        if (order.hasWater && !prepHasWater) {
+            penalty += 35
+            details.add("Americano requires hot water")
+        } else if (!order.hasWater && prepHasWater) {
+            penalty += 35
+            details.add("Diluted coffee with unwanted water")
+        }
+
+        // 6. Ice Well
+        if (order.iceCount == 0 && workbench.iceScoops > 0) {
+            penalty += 25
+            details.add("Ice added to hot drink")
+        } else if (order.iceCount > 0 && workbench.iceScoops == 0) {
+            penalty += 25
+            details.add("Forgot ice on iced drink")
+        } else if (order.iceCount > 0 && workbench.iceScoops != order.iceCount) {
+            val iceDiff = abs(workbench.iceScoops - order.iceCount)
+            penalty += iceDiff * 15
+            details.add("Ice scoops mismatch (${workbench.iceScoops} vs ${order.iceCount})")
+        }
+
+        // 7. Syrup
+        val targetNeedsSyrup = order.syrupFlavor != "None"
+        val prepHasSyrup = workbench.syrupType != "None" && workbench.syrupPumps > 0
+        if (targetNeedsSyrup && !prepHasSyrup) {
+            penalty += 25
+            details.add("Missing ${order.syrupFlavor} syrup")
+        } else if (!targetNeedsSyrup && prepHasSyrup) {
+            penalty += 30
+            details.add("Unwanted syrup added")
+        } else if (targetNeedsSyrup && prepHasSyrup) {
+            if (workbench.syrupType != order.syrupFlavor) {
+                penalty += 25
+                details.add("Wrong syrup flavor (${workbench.syrupType} vs ${order.syrupFlavor})")
+            } else if (workbench.syrupPumps != order.syrupPumps) {
+                val pumpsDiff = abs(workbench.syrupPumps - order.syrupPumps)
+                penalty += if (workbench.syrupPumps < order.syrupPumps) {
+                    pumpsDiff * 15
+                } else {
+                    pumpsDiff * 20
+                }
+                details.add("Syrup pumps mismatch (${workbench.syrupPumps} vs ${order.syrupPumps})")
+            }
+        }
+
+        val accuracy = (100 - penalty).coerceIn(0, 100)
+        val isSuccessful = accuracy >= 50
+
+        if (isSuccessful) {
+            lastShiftCompletedOrders++
+            
+            var gradeLabel = "ACCEPTABLE"
+            var tipMult = 0.4
+            
+            if (accuracy >= 95) {
+                gradeLabel = "PERFECT!"
+                tipMult = 1.5
+            } else if (accuracy >= 80) {
+                gradeLabel = "GREAT"
+                tipMult = 1.0
+            }
+
+            val tipAmount = if (order.tipBonus > 0.0) {
+                val baseTip = order.patience * order.tipBonus * tipMult
+                val neonApronMultiplier = if (unlockedEquipment.contains("NeonApron")) 1.15 else 1.0
+                NumberFormatUtil.round(baseTip * neonApronMultiplier)
+            } else {
+                0.00
+            }
+
+            val comboBonus = if (shiftComboStreak > 1) {
+                NumberFormatUtil.round(shiftComboStreak * 0.20)
+            } else {
+                0.00
+            }
+
+            val profit = order.price + tipAmount + comboBonus
             
             shiftEarnings += profit
             shiftComboStreak++
             shiftChaosLevel = (shiftChaosLevel - 15f).coerceAtLeast(0f)
-            lastShiftTips += patienceBonus + comboBonus
+            lastShiftTips += tipAmount + comboBonus
 
             activeOrders.remove(order)
             selectedOrderId = activeOrders.firstOrNull()?.id
             workbench.clear()
-            triggerToast("PERFECT BREW! Served ${order.customerName} (Earned \$${"%.2f".format(profit)})", "✅")
+
+            val feedbackText = if (details.isEmpty()) {
+                "Perfect drink! Commuter tipped generously!"
+            } else {
+                "Good enough coffee! (${details.joinToString(", ")})"
+            }
+
+            triggerToast("$gradeLabel Served ${order.customerName} (Earned \$${"%.2f".format(profit)})", "✅")
+            triggerToast(feedbackText, "📢")
         } else {
-            // Bad drink penalty (counter spill)
             workbench.hasSpill = true
             shiftComboStreak = 1
             lastShiftSpills++
-            triggerToast("⚠️ HORRIBLE COMBINATION! Spill on counter!", "❌")
+            val feedbackText = "Drink rejected! (${details.joinToString(", ")})"
+            triggerToast("⚠️ SPILL! Rejected drink!", "❌")
+            triggerToast(feedbackText, "📢")
         }
     }
 
@@ -454,5 +652,11 @@ class GameState(
             else -> settings
         }
         saveGame()
+    }
+}
+
+object NumberFormatUtil {
+    fun round(value: Double): Double {
+        return Math.round(value * 100.0) / 100.0
     }
 }

@@ -92,7 +92,6 @@ fun GameScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color(0xFF130E26))
-                    .border(bottom = 3.dp, Color(0xFF1A162B))
                     .padding(horizontal = 14.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -155,6 +154,7 @@ fun GameScreen(
                     )
                 }
             }
+            Box(modifier = Modifier.fillMaxWidth().height(3.dp).background(Color(0xFF1A162B)))
 
             // CHAOS LEVEL SLIDER
             Row(
@@ -211,7 +211,6 @@ fun GameScreen(
                     .fillMaxWidth()
                     .height(145.dp)
                     .background(Color(0xFF17122E))
-                    .border(bottom = 3.dp, Color(0xFF1A162B))
             ) {
                 // Conduit piping background canvas
                 Canvas(modifier = Modifier.fillMaxSize()) {
@@ -339,16 +338,23 @@ fun GameScreen(
                             .fillMaxWidth()
                             .height(10.dp)
                             .offset(y = 12.dp)
-                            .background(Color(0xFFFBBF24))
-                            .border(top = 1.5.dp, bottom = 1.5.dp, color = Color(0xFF1A162B))
+                            .background(Color(0xFF1A162B))
                     ) {
-                        Text(
-                            text = "MTA METRO COMMUTER EXPRESS • CAR #204",
-                            fontSize = 6.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(7.dp)
+                                .align(Alignment.Center)
+                                .background(Color(0xFFFBBF24))
+                        ) {
+                            Text(
+                                text = "MTA METRO COMMUTER EXPRESS • CAR #204",
+                                fontSize = 6.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
                     }
 
                     // Windows with glass glare & silhouettes
@@ -412,25 +418,31 @@ fun GameScreen(
                 }
 
                 // Platform Yellow tactile bumps edge
-                Row(
+                Column(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
-                        .height(8.dp)
-                        .background(Color(0xFFEAB308))
-                        .border(top = 2.dp, color = Color(0xFF1A162B)),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    repeat(14) {
-                        Box(
-                            modifier = Modifier
-                                .size(6.dp, 3.dp)
-                                .background(Color(0xFFB45309), shape = RoundedCornerShape(1.dp))
-                        )
+                    Box(modifier = Modifier.fillMaxWidth().height(2.dp).background(Color(0xFF1A162B)))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(6.dp)
+                            .background(Color(0xFFEAB308)),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        repeat(14) {
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp, 3.dp)
+                                    .background(Color(0xFFB45309), shape = RoundedCornerShape(1.dp))
+                            )
+                        }
                     }
                 }
             }
+            Box(modifier = Modifier.fillMaxWidth().height(3.dp).background(Color(0xFF1A162B)))
 
             // 3. HORIZONTAL CUSTOMERS QUEUE CONTAINER
             Column(
@@ -593,61 +605,64 @@ fun GameScreen(
             // 4. ACTIVE TARGET ORDER RECIPE BANNER (LIGHTS UP AS YOU BUILD)
             val currentSelectedOrder = gameState.activeOrders.find { it.id == gameState.selectedOrderId }
             if (currentSelectedOrder != null) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color(0xFF1D1735))
-                        .border(top = 2.dp, bottom = 2.dp, color = Color(0xFF1A162B))
-                        .padding(horizontal = 14.dp, vertical = 6.dp),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "RECIPE CHECKS:",
-                        fontSize = 7.5.sp,
-                        fontFamily = FontFamily.Monospace,
-                        color = Color(0xFF94A3B8),
-                        fontWeight = FontWeight.Bold
-                    )
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Box(modifier = Modifier.fillMaxWidth().height(2.dp).background(Color(0xFF1A162B)))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFF1D1735))
+                            .padding(horizontal = 14.dp, vertical = 6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "RECIPE CHECKS:",
+                            fontSize = 7.5.sp,
+                            fontFamily = FontFamily.Monospace,
+                            color = Color(0xFF94A3B8),
+                            fontWeight = FontWeight.Bold
+                        )
 
-                    // Size Badge
-                    val cupSizeMatches = gameState.workbench.currentCupSize == currentSelectedOrder.size
-                    RecipeChip(
-                        label = "SIZE: ${currentSelectedOrder.size.uppercase()}",
-                        status = if (cupSizeMatches) RecipeStatus.MATCHED else if (gameState.workbench.currentCupSize == "None") RecipeStatus.PENDING else RecipeStatus.FAILED
-                    )
+                        // Size Badge
+                        val cupSizeMatches = gameState.workbench.currentCupSize == currentSelectedOrder.size
+                        RecipeChip(
+                            label = "SIZE: ${currentSelectedOrder.size.uppercase()}",
+                            status = if (cupSizeMatches) RecipeStatus.MATCHED else if (gameState.workbench.currentCupSize == "None") RecipeStatus.PENDING else RecipeStatus.FAILED
+                        )
 
-                    // Shots Badge
-                    val shotsMatches = gameState.workbench.brewedShots >= currentSelectedOrder.shots
-                    RecipeChip(
-                        label = "SHOTS: ${gameState.workbench.brewedShots}/${currentSelectedOrder.shots}",
-                        status = if (shotsMatches) RecipeStatus.MATCHED else if (gameState.workbench.brewedShots == 0) RecipeStatus.PENDING else RecipeStatus.FAILED
-                    )
+                        // Shots Badge
+                        val shotsMatches = gameState.workbench.brewedShots >= currentSelectedOrder.shots
+                        RecipeChip(
+                            label = "SHOTS: ${gameState.workbench.brewedShots}/${currentSelectedOrder.shots}",
+                            status = if (shotsMatches) RecipeStatus.MATCHED else if (gameState.workbench.brewedShots == 0) RecipeStatus.PENDING else RecipeStatus.FAILED
+                        )
 
-                    // Milk Badge
-                    val milkMatches = (currentSelectedOrder.milk == "None" && gameState.workbench.milkType == "None") ||
-                                      (currentSelectedOrder.milk != "None" && gameState.workbench.milkType == currentSelectedOrder.milk)
-                    val milkSteamedMatches = currentSelectedOrder.milk == "None" || gameState.workbench.milkSteamed
-                    
-                    RecipeChip(
-                        label = if (currentSelectedOrder.milk == "None") "MILK: NO" else "MILK: ${currentSelectedOrder.milk.substringBefore(" ")}",
-                        status = if (milkMatches && milkSteamedMatches) RecipeStatus.MATCHED else if (gameState.workbench.milkType == "None") RecipeStatus.PENDING else RecipeStatus.FAILED
-                    )
+                        // Milk Badge
+                        val milkMatches = (currentSelectedOrder.milk == "None" && gameState.workbench.milkType == "None") ||
+                                          (currentSelectedOrder.milk != "None" && gameState.workbench.milkType == currentSelectedOrder.milk)
+                        val milkSteamedMatches = currentSelectedOrder.milk == "None" || gameState.workbench.milkSteamed
+                        
+                        RecipeChip(
+                            label = if (currentSelectedOrder.milk == "None") "MILK: NO" else "MILK: ${currentSelectedOrder.milk.substringBefore(" ")}",
+                            status = if (milkMatches && milkSteamedMatches) RecipeStatus.MATCHED else if (gameState.workbench.milkType == "None") RecipeStatus.PENDING else RecipeStatus.FAILED
+                        )
 
-                    // Syrup Badge
-                    val syrupMatches = (currentSelectedOrder.syrup == "None" && gameState.workbench.syrupType == "None") ||
-                                       (currentSelectedOrder.syrup != "None" && gameState.workbench.syrupType == currentSelectedOrder.syrup)
-                    RecipeChip(
-                        label = if (currentSelectedOrder.syrup == "None") "SYRUP: NO" else "SYRUP: ${currentSelectedOrder.syrup.uppercase()}",
-                        status = if (syrupMatches) RecipeStatus.MATCHED else if (gameState.workbench.syrupType == "None") RecipeStatus.PENDING else RecipeStatus.FAILED
-                    )
+                        // Syrup Badge
+                        val syrupMatches = (currentSelectedOrder.syrup == "None" && gameState.workbench.syrupType == "None") ||
+                                           (currentSelectedOrder.syrup != "None" && gameState.workbench.syrupType == currentSelectedOrder.syrupFlavor)
+                        RecipeChip(
+                            label = if (currentSelectedOrder.syrup == "None") "SYRUP: NO" else "SYRUP: ${currentSelectedOrder.syrup.uppercase()}",
+                            status = if (syrupMatches) RecipeStatus.MATCHED else if (gameState.workbench.syrupType == "None") RecipeStatus.PENDING else RecipeStatus.FAILED
+                        )
 
-                    // Ice Badge
-                    val iceMatches = currentSelectedOrder.hasIce == (gameState.workbench.iceScoops > 0)
-                    RecipeChip(
-                        label = if (currentSelectedOrder.hasIce) "ICE: YES" else "ICE: NO",
-                        status = if (iceMatches) RecipeStatus.MATCHED else RecipeStatus.PENDING
-                    )
+                        // Ice Badge
+                        val iceMatches = currentSelectedOrder.hasIce == (gameState.workbench.iceScoops > 0)
+                        RecipeChip(
+                            label = if (currentSelectedOrder.hasIce) "ICE: YES" else "ICE: NO",
+                            status = if (iceMatches) RecipeStatus.MATCHED else RecipeStatus.PENDING
+                        )
+                    }
+                    Box(modifier = Modifier.fillMaxWidth().height(2.dp).background(Color(0xFF1A162B)))
                 }
             }
 
