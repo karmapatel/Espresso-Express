@@ -1739,3 +1739,74 @@ img {
     font-size: 16px;
   }
 }
+
+/* ========================================================================= */
+/* EXTRA MOBILE SQUISH & OVERFLOW PREVENTIONS (Under 500px)                 */
+/* ========================================================================= */
+@media (max-width: 500px) {
+  /* Prevent Header Overcrowding & Clipping */
+  .header-actions .btn-pill-download {
+    display: none !important;
+  }
+  .brand-sub {
+    display: none !important;
+  }
+  .site-header {
+    padding: 0 10px;
+  }
+  
+  /* Hide overlapping badges on small images to prevent covering the visual */
+  .badge-float {
+    display: none !important;
+  }
+}
+
+/* Extra small mobile adjustments (Under 420px) */
+@media (max-width: 420px) {
+  /* Smaller CTA Buttons */
+  .cta-title {
+    font-size: 14px !important;
+  }
+  .cta-subtitle {
+    font-size: 9px !important;
+  }
+  .cta-icon-box {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 16px !important;
+  }
+  .btn-arcade-lg {
+    padding: 10px 14px !important;
+  }
+
+  /* Compact Station Tabs */
+  .station-tab {
+    padding: 8px 12px !important;
+    font-size: 10.5px !important;
+  }
+  .tab-emoji {
+    font-size: 13px !important;
+  }
+  
+  /* Reduce excessive padding */
+  .station-display-box {
+    padding: 16px !important;
+  }
+  .download-banner-card {
+    padding: 24px 12px !important;
+  }
+  
+  /* Smaller Main Download Button */
+  .download-btn-text .main-label {
+    font-size: 14px !important;
+  }
+  .download-btn-text .sub-label {
+    font-size: 9.5px !important;
+  }
+  .btn-arcade-xl {
+    padding: 12px 14px !important;
+  }
+  .download-glow-icon {
+    font-size: 20px !important;
+  }
+}

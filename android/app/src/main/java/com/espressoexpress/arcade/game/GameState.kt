@@ -150,6 +150,7 @@ class GameState(
     var settings by mutableStateOf(GameSettings())
 
     var isShiftActive by mutableStateOf(false)
+    var isShiftPaused by mutableStateOf(false)
     var isRushActive by mutableStateOf(false)
     var shiftEarnings by mutableStateOf(0.0)
     var shiftComboStreak by mutableStateOf(0)
@@ -209,6 +210,7 @@ class GameState(
 
     fun startShift() {
         isShiftActive = true
+        isShiftPaused = false
         isRushActive = false
         shiftEarnings = 0.0
         shiftComboStreak = 0
@@ -230,6 +232,25 @@ class GameState(
             runGameLoop()
         }
         triggerToast("SHIFT STARTED • PLATFORM 9", "🚦")
+    }
+
+    fun pauseShift() {
+        if (isShiftActive) {
+            isShiftActive = false
+            isShiftPaused = true
+            triggerToast("SHIFT PAUSED", "⏸")
+        }
+    }
+
+    fun resumeShift() {
+        if (isShiftPaused) {
+            isShiftActive = true
+            isShiftPaused = false
+            if (!gameLoopRunning) {
+                runGameLoop()
+            }
+            triggerToast("SHIFT RESUMED", "⚡")
+        }
     }
 
     fun endShift() {
@@ -384,7 +405,6 @@ class GameState(
             return
         }
         workbench.currentCupSize = size
-        triggerToast("Grabbed $size Cup", "🥤")
     }
 
     fun grindBeans() {
@@ -393,7 +413,6 @@ class GameState(
             return
         }
         workbench.hasGrinds = true
-        triggerToast("Grinding fresh coffee beans", "⚙️")
     }
 
     fun pullEspressoShot(count: Int = 1) {
@@ -402,7 +421,6 @@ class GameState(
             return
         }
         workbench.brewedShots += count
-        triggerToast("Pulled $count shot(s) of Espresso", "☕")
     }
 
     fun selectMilk(milk: String) {
@@ -411,7 +429,6 @@ class GameState(
             return
         }
         workbench.milkType = milk
-        triggerToast("Added $milk", "🥛")
     }
 
     fun frothMilk() {
@@ -420,7 +437,6 @@ class GameState(
             return
         }
         workbench.milkSteamed = true
-        triggerToast("Steamed milk to silky microfoam", "💨")
     }
 
     fun addSyrup(flavor: String) {
@@ -430,7 +446,6 @@ class GameState(
         }
         workbench.syrupType = flavor
         workbench.syrupPumps++
-        triggerToast("Added pump of $flavor Syrup", "🍯")
     }
 
     fun addIce() {
@@ -439,19 +454,16 @@ class GameState(
             return
         }
         workbench.iceScoops++
-        triggerToast("Added Ice Scoop", "❄️")
     }
 
     fun cleanCounter() {
         workbench.hasSpill = false
         shiftChaosLevel = (shiftChaosLevel - 10f).coerceAtLeast(0f)
-        triggerToast("Spill cleaned with sponge!", "🧽")
     }
 
     fun dumpDrink() {
         workbench.clear()
         lastShiftSpills++
-        triggerToast("Poured cup contents down the sink!", "🗑️")
     }
 
     fun serveCurrentDrink() {

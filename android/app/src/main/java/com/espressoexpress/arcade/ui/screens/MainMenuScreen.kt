@@ -402,6 +402,37 @@ fun MainMenuScreen(
                     .padding(bottom = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
+                if (gameState.isShiftPaused) {
+                    // Resume Shift Button
+                    Button(
+                        onClick = {
+                            gameState.resumeShift()
+                            onNavigateTo(AppScreen.GAME)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp)
+                            .border(3.5.dp, Color(0xFF1A162B), shape = RoundedCornerShape(14.dp)),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981)),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(text = "▶", fontSize = 16.sp, color = Color.White)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "RESUME PAUSED SHIFT",
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Black,
+                                fontSize = 14.sp,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
+
                 // Start Shift / Play Button
                 Button(
                     onClick = {
@@ -422,7 +453,7 @@ fun MainMenuScreen(
                         Text(text = "⚡", fontSize = 18.sp)
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "START SHIFT (PLAY)",
+                            text = if (gameState.isShiftPaused) "START NEW FRESH SHIFT" else "START SHIFT (PLAY)",
                             fontFamily = FontFamily.Monospace,
                             fontWeight = FontWeight.Black,
                             fontSize = 14.sp,

@@ -96,6 +96,22 @@ fun GameScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // ⏸ PAUSE
+                Button(
+                    onClick = {
+                        gameState.pauseShift()
+                        onNavigateTo(AppScreen.MAIN_MENU)
+                    },
+                    modifier = Modifier
+                        .size(38.dp)
+                        .border(1.5.dp, Color(0xFF1A162B), shape = RoundedCornerShape(8.dp)),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444)),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(0.dp)
+                ) {
+                    Text(text = "⏸", fontSize = 11.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                }
+
                 // Earnings
                 Column {
                     Text(
@@ -803,7 +819,7 @@ fun GameScreen(
                             }
                             Box(modifier = Modifier.weight(1f)) {
                                 Button(
-                                    onClick = { gameState.workbench.milkType = "Water"; gameState.triggerToast("Added Hot Water", "💧") },
+                                    onClick = { gameState.workbench.milkType = "Water" },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .height(30.dp)

@@ -44,7 +44,7 @@ fun SettingsScreen(
         }
     }
     val currentVersionName = packageInfo?.versionName ?: "1.0.0"
-    var checkUpdateStatus by remember { mutableStateOf("v$currentVersionName (Ready)") }
+    var checkUpdateStatus by remember { mutableStateOf("Ready to check") }
 
     Box(
         modifier = Modifier
@@ -206,10 +206,42 @@ fun SettingsScreen(
                         scope.launch {
                             checkUpdateStatus = "Contacting version registry..."
                             try {
-                                val result = withContext(Dispatchers.IO) {
-                                    URL("https://ais-pre-472yxwq4z56wuftegmr7lu-324319867172.asia-southeast1.run.app/version.json").readText()
+                                val urls = listOf(
+                                    "https://ais-pre-472yxwq4z56wuftegmr7lu-324319867172.asia-southeast1.run.app/version.json",
+                                    "https://ais-dev-472yxwq4z56wuftegmr7lu-324319867172.asia-southeast1.run.app/version.json"
+                                )
+                                var resultStr: String? = null
+                                var lastException: Exception? = null
+                                
+                                withContext(Dispatchers.IO) {
+                                    for (urlStr in urls) {
+                                        try {
+                                            val url = URL(urlStr)
+                                            val connection = url.openConnection() as java.net.HttpURLConnection
+                                            connection.requestMethod = "GET"
+                                            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) EspressoExpressUpdater/1.0.1")
+                                            connection.connectTimeout = 6000
+                                            connection.readTimeout = 6000
+                                            connection.doInput = true
+                                            
+                                            val responseCode = connection.responseCode
+                                            if (responseCode == java.net.HttpURLConnection.HTTP_OK) {
+                                                resultStr = connection.inputStream.bufferedReader().use { it.readText() }
+                                                break
+                                            } else {
+                                                lastException = Exception("HTTP $responseCode from update server")
+                                            }
+                                        } catch (e: Exception) {
+                                            lastException = e
+                                        }
+                                    }
                                 }
-                                val json = JSONObject(result)
+
+                                if (resultStr == null) {
+                                    throw lastException ?: Exception("Network request yielded empty result")
+                                }
+
+                                val json = JSONObject(resultStr!!)
                                 val serverVersionCode = json.optInt("versionCode", 100)
                                 val serverVersionName = json.optString("versionName", "1.0.0")
                                 val apkUrl = json.optString("apkUrl", "")
@@ -229,11 +261,12 @@ fun SettingsScreen(
                                     context.startActivity(browserIntent)
                                 } else {
                                     checkUpdateStatus = "v$currentVersionName (Up to date)"
-                                    gameState.triggerToast("Already on the latest build!", "📶")
+                                    gameState.triggerToast("Already on latest build v$currentVersionName!", "📶")
                                 }
                             } catch (e: Exception) {
-                                checkUpdateStatus = "Offline / Connection failed"
-                                gameState.triggerToast("Could not reach update server", "⚠️")
+                                val errMsg = e.javaClass.simpleName ?: "Connection Error"
+                                checkUpdateStatus = "Failed: $errMsg"
+                                gameState.triggerToast("Update check failed: $errMsg", "⚠️")
                             }
                         }
                     },
@@ -249,8 +282,20 @@ fun SettingsScreen(
                     )
                 }
 
+                Spacer(modifier = Modifier.height(10.dp))
+
                 Text(
-                    text = "Current Status: $checkUpdateStatus",
+                    text = "Current App Version: $currentVersionName",
+                    fontSize = 11.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold,
+                    color = AmberAccent,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+
+                Text(
+                    text = "Update Status: $checkUpdateStatus",
                     fontSize = 10.sp,
                     fontFamily = FontFamily.Monospace,
                     color = TextSecondary,
