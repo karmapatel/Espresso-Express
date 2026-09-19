@@ -226,9 +226,24 @@ function initScrollHeader() {
 /* ------------------------------------------------------------------------- */
 /* 5. GITHUB RELEASE SYNCHRONIZER                                            */
 /* ------------------------------------------------------------------------- */
+function isVersionNewer(newVer, currentVer) {
+  if (!newVer) return false;
+  if (!currentVer) return true;
+  const parse = (v) => v.replace(/^v/, '').split('.').map(x => parseInt(x, 10) || 0);
+  const a = parse(newVer);
+  const b = parse(currentVer);
+  for (let i = 0; i < Math.max(a.length, b.length); i++) {
+    const valA = a[i] || 0;
+    const valB = b[i] || 0;
+    if (valA > valB) return true;
+    if (valA < valB) return false;
+  }
+  return false;
+}
+
 async function fetchLatestRelease() {
   let downloadUrl = "/downloads/EspressoExpress.apk";
-  let version = "1.1.0";
+  let version = "1.1.1";
 
   // Try to find the local version.json first to be accurate to local deployments
   try {
@@ -264,7 +279,7 @@ async function fetchLatestRelease() {
         if (res.ok) {
           const data = await res.json();
           let rawVersion = data.tag_name ? data.tag_name.replace(/^v/, '') : "";
-          if (rawVersion && rawVersion !== "latest") {
+          if (rawVersion && rawVersion !== "latest" && isVersionNewer(rawVersion, version)) {
             version = rawVersion;
           }
           
