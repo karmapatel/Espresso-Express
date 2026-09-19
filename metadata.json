@@ -1,0 +1,6 @@
+{
+  "name": "Espresso Express",
+  "description": "2D Mobile Arcade Game",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

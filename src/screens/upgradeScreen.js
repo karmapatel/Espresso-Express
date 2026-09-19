@@ -4,10 +4,14 @@
 
 import { MOCK_UPGRADES } from '../data/mockData.js';
 
-export function renderUpgradeScreen(activeCategory = 'all') {
+export function renderUpgradeScreen(activeCategory = 'all', upgrades = MOCK_UPGRADES, player = {}) {
+  const currentUpgrades = upgrades || MOCK_UPGRADES;
   const filteredUpgrades = activeCategory === 'all' 
-    ? MOCK_UPGRADES 
-    : MOCK_UPGRADES.filter(u => u.category === activeCategory);
+    ? currentUpgrades 
+    : currentUpgrades.filter(u => u.category === activeCategory);
+
+  const cash = player.cash !== undefined ? Math.round(player.cash) : 437;
+  const tokens = player.tokens !== undefined ? player.tokens : 12;
 
   return `
     <div class="upgrades-screen-container screen-animate-in" style="position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; background: radial-gradient(circle at 50% 10%, #291e45 0%, #151124 55%, #0d0a17 100%); overflow: hidden;">
@@ -23,11 +27,11 @@ export function renderUpgradeScreen(activeCategory = 'all') {
         <div style="display: flex; gap: 4px;">
           <div class="game-pill pill-coin" style="padding: 2px 7px; font-size: 10px;">
             <div class="pill-coin-icon" style="width: 14px; height: 14px; font-size: 8px;">¢</div>
-            <span>$437</span>
+            <span>$${cash}</span>
           </div>
           <div class="game-pill pill-token" style="padding: 2px 6px; font-size: 10px;">
             <div class="pill-token-icon" style="width: 14px; height: 14px; font-size: 8px;">T</div>
-            <span>12</span>
+            <span>${tokens}</span>
           </div>
         </div>
       </div>

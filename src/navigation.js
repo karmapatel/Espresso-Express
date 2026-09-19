@@ -9,30 +9,88 @@ import { renderUpgradeScreen } from './screens/upgradeScreen.js';
 import { renderSettingsScreen } from './screens/settingsScreen.js';
 import { renderOrderModal } from './components/orderModal.js';
 import { showToast } from './components/toast.js';
-import { MOCK_ORDERS } from './data/mockData.js';
+import { renderCustomerQueue } from './components/customerQueue.js';
+import { renderCounterTop } from './components/counterTop.js';
+import { renderWorkstation } from './components/workstation.js';
+import { MOCK_SHIFT_RESULTS } from './data/mockData.js';
+import { gameState } from './game/gameState.js';
+import { gameLoop } from './game/gameLoop.js';
+import { audioSystem } from './game/audioSystem.js';
 
 class NavigationController {
   constructor() {
     this.currentScreen = 'main-menu';
     this.activeCategory = 'all';
-    this.isRushActive = false;
-    this.heldItem = "Double Shot Portafilter";
-    this.cash = 142;
     this.activeOrder = null;
 
     this.root = document.getElementById('screens-root');
     this.modalContainer = document.getElementById('modal-container');
     this.devNavButtons = document.querySelectorAll('.dev-btn[data-nav]');
+
+    this.unsubscribeState = null;
+    this.unsubscribeLoop = null;
   }
 
   init() {
-    this.render();
     this.setupGlobalEvents();
+    this.setupStateSubscriptions();
+    this.render();
+  }
+
+  setupStateSubscriptions() {
+    this.unsubscribeState = gameState.subscribe((event, payload) => {
+      if (event === 'shift_end') {
+        showToast("SHIFT OVER! TIME FOR PERFORMANCE REVIEW!", "🏁");
+        this.navigateTo('results');
+      } else if (event === 'workbench_update') {
+        this.updateHeldDisplay();
+        this.updateSpillDisplay();
+        this.updateWorkstation();
+      } else if (event === 'order_selected') {
+        this.updateCustomerQueueAndRail();
+        this.updateWorkstation();
+      } else if (event === 'order_spawned') {
+        this.updateCustomerQueueAndRail();
+        this.updateWorkstation();
+      } else if (event === 'order_served') {
+        this.updateGameHUD();
+        this.updateCustomerQueueAndRail();
+        this.updateWorkstation();
+      } else if (event === 'order_failed') {
+        this.updateGameHUD();
+        this.updateCustomerQueueAndRail();
+        this.updateWorkstation();
+      }
+    });
+
+    this.unsubscribeLoop = gameLoop.onTick((shift) => {
+      if (this.currentScreen === 'game') {
+        this.updateGameHUD();
+      }
+    });
   }
 
   navigateTo(screenName, options = {}) {
+    // If leaving game screen without pause, handle gameLoop
+    if (this.currentScreen === 'game' && screenName !== 'game') {
+      if (gameState.shift.active && !gameState.shift.paused && screenName !== 'results') {
+        gameState.pauseShift();
+      }
+      gameLoop.stop();
+    }
+
     this.currentScreen = screenName;
     if (options.category) this.activeCategory = options.category;
+
+    if (screenName === 'game') {
+      if (!gameState.shift.active) {
+        gameState.startShift();
+      } else if (gameState.shift.paused) {
+        gameState.resumeShift();
+      }
+      gameLoop.start();
+    }
+
     this.render();
     this.updateDevNavHighlights();
     this.closeModal();
@@ -50,23 +108,37 @@ class NavigationController {
   }
 
   toggleRushState() {
-    this.isRushActive = !this.isRushActive;
+    if (!gameState.shift.active) {
+      gameState.shift.isRushActive = !gameState.shift.isRushActive;
+    } else {
+      gameState.shift.isRushActive = !gameState.shift.isRushActive;
+      if (gameState.shift.isRushActive) {
+        gameState.shift.rushTimer = 20;
+        audioSystem.playRushAlert();
+      }
+    }
+
+    const isRush = gameState.shift.isRushActive;
     showToast(
-      this.isRushActive ? "🚨 RUSH HOUR OVERDRIVE ACTIVATED!" : "⏱️ PREP PHASE ACTIVATED", 
-      this.isRushActive ? "⚡" : "☕"
+      isRush ? "🚨 RUSH HOUR OVERDRIVE ACTIVATED!" : "⏱️ PREP PHASE ACTIVATED", 
+      isRush ? "⚡" : "☕"
     );
+
     if (this.currentScreen === 'game') {
-      this.render();
+      this.updateRushBanner();
+      this.updateGameHUD();
     }
   }
 
   openOrderModal(orderId) {
-    const order = MOCK_ORDERS.find(o => o.id === orderId) || MOCK_ORDERS[0];
+    const orders = gameState.shift.activeOrders || [];
+    const order = orders.find(o => o.id === Number(orderId)) || orders[0];
+    if (!order) return;
+
     this.activeOrder = order;
     this.modalContainer.innerHTML = renderOrderModal(order);
     this.modalContainer.classList.remove('hidden');
 
-    // Attach modal close & accept buttons
     const closeBtn = document.getElementById('btnCloseOrderModal');
     if (closeBtn) {
       closeBtn.onclick = () => this.closeModal();
@@ -75,23 +147,29 @@ class NavigationController {
     const focusBtn = document.getElementById('btnFocusOrder');
     if (focusBtn) {
       focusBtn.onclick = () => {
-        showToast(`PREPARING ${order.drinkName.toUpperCase()}!`, order.icon);
+        gameState.selectOrder(order.id);
+        this.updateCustomerQueueAndRail();
+        this.updateWorkstation();
         this.closeModal();
       };
     }
   }
 
   openPauseModal() {
+    gameState.pauseShift();
     this.modalContainer.innerHTML = `
       <div class="game-modal-card modal-animate-in">
         <div class="modal-header">
           <div class="modal-title">
             <span>⏸️</span>
-            <span>GAME PAUSED</span>
+            <span>SHIFT PAUSED</span>
           </div>
           <button class="modal-close-btn" id="btnClosePauseModal">✕</button>
         </div>
         <div class="modal-body" style="display: flex; flex-direction: column; gap: 10px; padding: 16px;">
+          <div style="font-size: 8px; color: #94a3b8; text-align: center; font-weight: 700;">
+            SHIFT #${gameState.shift.shiftNumber} • RELAXED SERVICE (NO TIME LIMIT)
+          </div>
           <button class="game-btn game-btn-amber" id="btnResumeGame" style="padding: 12px; font-size: 11px;">
             <span>▶</span>
             <span>RESUME SHIFT</span>
@@ -102,7 +180,7 @@ class NavigationController {
           </button>
           <button class="game-btn game-btn-emerald" id="btnPauseFinishShift" style="padding: 10px; font-size: 10px;">
             <span>📊</span>
-            <span>FINISH SHIFT (RESULTS)</span>
+            <span>CONCLUDE SHIFT EARLY</span>
           </button>
           <button class="game-btn game-btn-metal" id="btnPauseMainMenu" style="padding: 10px; font-size: 10px;">
             <span>🏠</span>
@@ -113,10 +191,18 @@ class NavigationController {
     `;
     this.modalContainer.classList.remove('hidden');
 
-    document.getElementById('btnClosePauseModal').onclick = () => this.closeModal();
-    document.getElementById('btnResumeGame').onclick = () => this.closeModal();
+    const handleResume = () => {
+      gameState.resumeShift();
+      this.closeModal();
+    };
+
+    document.getElementById('btnClosePauseModal').onclick = handleResume;
+    document.getElementById('btnResumeGame').onclick = handleResume;
     document.getElementById('btnPauseUpgrades').onclick = () => this.navigateTo('upgrades');
-    document.getElementById('btnPauseFinishShift').onclick = () => this.navigateTo('results');
+    document.getElementById('btnPauseFinishShift').onclick = () => {
+      gameState.endShift();
+      this.navigateTo('results');
+    };
     document.getElementById('btnPauseMainMenu').onclick = () => this.navigateTo('main-menu');
   }
 
@@ -129,26 +215,32 @@ class NavigationController {
   render() {
     switch (this.currentScreen) {
       case 'main-menu':
-        this.root.innerHTML = renderMainMenu();
+        this.root.innerHTML = renderMainMenu(gameState.player);
         this.bindMainMenuEvents();
         break;
 
       case 'game':
         this.root.innerHTML = renderGameScreen({
-          isRushActive: this.isRushActive,
-          heldItem: this.heldItem,
-          cash: this.cash
+          isRushActive: gameState.shift.isRushActive,
+          heldItem: gameState.workbench.heldItemDisplay,
+          cash: gameState.shift.totalEarned,
+          trainTimer: gameState.shift.trainTimer,
+          chaosLevel: gameState.shift.chaosLevel,
+          comboStreak: gameState.shift.comboStreak,
+          orders: gameState.shift.activeOrders,
+          hasSpill: gameState.workbench.hasSpill,
+          selectedOrderId: gameState.shift.selectedOrderId
         });
         this.bindGameScreenEvents();
         break;
 
       case 'results':
-        this.root.innerHTML = renderResultsScreen();
+        this.root.innerHTML = renderResultsScreen(gameState.lastShiftResults || MOCK_SHIFT_RESULTS);
         this.bindResultsScreenEvents();
         break;
 
       case 'upgrades':
-        this.root.innerHTML = renderUpgradeScreen(this.activeCategory);
+        this.root.innerHTML = renderUpgradeScreen(this.activeCategory, gameState.upgrades, gameState.player);
         this.bindUpgradeScreenEvents();
         break;
 
@@ -158,8 +250,68 @@ class NavigationController {
         break;
 
       default:
-        this.root.innerHTML = renderMainMenu();
+        this.root.innerHTML = renderMainMenu(gameState.player);
         this.bindMainMenuEvents();
+    }
+  }
+
+  /* Live HUD and Queue DOM Updaters */
+  updateGameHUD() {
+    const shift = gameState.shift;
+
+    const cashEl = document.getElementById('hudCashAmount');
+    if (cashEl) {
+      cashEl.innerText = `$${shift.totalEarned.toFixed(2)}`;
+    }
+
+    const fillEl = document.getElementById('hudChaosFill');
+    if (fillEl) {
+      fillEl.style.width = `${Math.min(100, Math.max(0, shift.chaosLevel))}%`;
+    }
+
+    const comboText = document.getElementById('hudComboText');
+    const comboPill = document.getElementById('hudComboPill');
+    if (comboText && comboPill) {
+      comboText.innerText = shift.comboStreak > 1 ? `x${shift.comboStreak} COMBO` : 'STREAK x1';
+      comboPill.style.opacity = shift.comboStreak > 1 ? '1' : '0.8';
+    }
+  }
+
+
+  updateCustomerQueueAndRail() {
+    const queueContainer = document.getElementById('customerQueueContainer');
+    if (queueContainer) {
+      queueContainer.innerHTML = renderCustomerQueue(gameState.shift.activeOrders, gameState.shift.selectedOrderId);
+    }
+    // Rebind newly rendered customer cards
+    this.bindOrderModalClicks();
+  }
+
+  updateWorkstation() {
+    const workstationEl = document.getElementById('workstationContainer');
+    if (workstationEl && this.currentScreen === 'game') {
+      const activeOrder = gameState.getSelectedOrder();
+      workstationEl.innerHTML = renderWorkstation(gameState.workbench.heldItemDisplay, {
+        workbench: gameState.workbench,
+        activeOrder
+      });
+      this.bindWorkstationEvents();
+    } else {
+      this.updateHeldDisplay();
+    }
+  }
+
+  updateHeldDisplay() {
+    const heldEl = document.getElementById('playerHeldDisplay');
+    if (heldEl) {
+      heldEl.innerText = gameState.workbench.heldItemDisplay;
+    }
+  }
+
+  updateSpillDisplay() {
+    const puddle = document.getElementById('spillPuddle');
+    if (puddle) {
+      puddle.style.display = gameState.workbench.hasSpill ? 'flex' : 'none';
     }
   }
 
@@ -183,112 +335,299 @@ class NavigationController {
     const pauseBtn = document.getElementById('hudPauseBtn');
     if (pauseBtn) pauseBtn.onclick = () => this.openPauseModal();
 
-    // Customer cards click -> Order details modal
+    this.bindOrderModalClicks();
+    this.bindCounterTopEvents();
+    this.bindWorkstationEvents();
+  }
+
+  bindOrderModalClicks() {
     document.querySelectorAll('.customer-card, .order-rail-ticket').forEach(el => {
       el.onclick = () => {
         const orderId = el.getAttribute('data-order-id');
-        this.openOrderModal(orderId);
+        if (orderId) {
+          gameState.selectOrder(orderId);
+          this.updateCustomerQueueAndRail();
+          this.updateWorkstation();
+        }
       };
     });
+  }
 
-    // Station 1: Grinder
+  bindCounterTopEvents() {
+    const serveZone = document.getElementById('serveZoneBtn');
+    const spongeBtn = document.getElementById('cleanSpongeBtn');
+    const registerBtn = document.getElementById('cashRegisterBtn');
+
+    if (serveZone) {
+      serveZone.onclick = () => {
+        const res = gameState.serveCurrentDrink();
+        if (!res.success) {
+          showToast(res.message, "⚠️");
+        }
+      };
+    }
+
+    if (spongeBtn) {
+      spongeBtn.onclick = () => {
+        gameState.cleanCounter();
+        this.updateSpillDisplay();
+        this.updateGameHUD();
+      };
+    }
+
+    if (registerBtn) {
+      registerBtn.onclick = () => {
+        audioSystem.playCoinClink();
+      };
+    }
+  }
+
+  bindWorkstationEvents() {
+    // Helper to only trigger toast notifications on incorrect items / warning processes
+    const handleStationWarning = (res) => {
+      if (!res) return;
+      if (typeof res === 'string' && res.startsWith('⚠️')) {
+        showToast(res, "⚠️");
+      } else if (typeof res === 'object' && (res.warning || !res.success)) {
+        showToast(res.message || "⚠️ Incorrect item or process!", "⚠️");
+      }
+    };
+
+    // Inspect Active Order
+    const inspectBtn = document.getElementById('btnInspectActiveOrder');
+    if (inspectBtn) {
+      inspectBtn.onclick = () => {
+        const orderId = inspectBtn.getAttribute('data-order-id');
+        this.openOrderModal(orderId);
+      };
+    }
+
+    // Station 1: Grinder & Cup Picker
     const grindBtn = document.getElementById('btnGrindAction');
     const grindStation = document.getElementById('stationGrind');
     const triggerGrind = () => {
-      this.heldItem = "Portafilter (Fresh Grounds)";
-      this.updateHeldDisplay();
-      showToast("GRINDING BEANS! [FINE ESPRESSO MESH]", "⚙️");
+      const msg = gameState.grindBeans();
+      handleStationWarning(msg);
     };
     if (grindBtn) grindBtn.onclick = (e) => { e.stopPropagation(); triggerGrind(); };
-    if (grindStation) grindStation.onclick = triggerGrind;
+    if (grindStation) {
+      grindStation.onclick = (e) => {
+        if (e.target.closest('button')) return;
+        triggerGrind();
+      };
+    }
 
-    // Station 2: Espresso Pull
+    // Station 1 Cup Buttons: [S], [M], [L]
+    const cupSmall = document.getElementById('btnCupSmall');
+    const cupMedium = document.getElementById('btnCupMedium');
+    const cupLarge = document.getElementById('btnCupLarge');
+    if (cupSmall) {
+      cupSmall.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.grabCup('Small');
+        handleStationWarning(msg);
+      };
+    }
+    if (cupMedium) {
+      cupMedium.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.grabCup('Medium');
+        handleStationWarning(msg);
+      };
+    }
+    if (cupLarge) {
+      cupLarge.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.grabCup('Large');
+        handleStationWarning(msg);
+      };
+    }
+
+    // Station 2: Espresso Pull (Single / Double)
+    const pullSingleBtn = document.getElementById('btnPullSingle');
+    const pullDoubleBtn = document.getElementById('btnPullDouble');
     const pullBtn = document.getElementById('btnPullShotAction');
     const espressoStation = document.getElementById('stationEspresso');
-    const triggerPull = () => {
-      this.heldItem = "Steaming Double Shot Extract";
-      this.updateHeldDisplay();
-      showToast("PULLED ESPRESSO! 9.2 BARS EXTRACT", "☕");
-    };
-    if (pullBtn) pullBtn.onclick = (e) => { e.stopPropagation(); triggerPull(); };
-    if (espressoStation) espressoStation.onclick = triggerPull;
 
-    // Station 3: Milk
+    if (pullSingleBtn) {
+      pullSingleBtn.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.pullEspressoShot(1);
+        handleStationWarning(msg);
+      };
+    }
+    if (pullDoubleBtn) {
+      pullDoubleBtn.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.pullEspressoShot(2);
+        handleStationWarning(msg);
+      };
+    }
+    if (pullBtn) {
+      pullBtn.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.pullEspressoShot();
+        handleStationWarning(msg);
+      };
+    }
+    if (espressoStation) {
+      espressoStation.onclick = (e) => {
+        if (e.target.closest('button')) return;
+        const msg = gameState.pullEspressoShot(1);
+        handleStationWarning(msg);
+      };
+    }
+
+    // Station 3: Milk Selection, Steaming & Hot Water
     const wholeMilk = document.getElementById('btnSelectWholeMilk');
     const oatMilk = document.getElementById('btnSelectOatMilk');
     const frothBtn = document.getElementById('btnSteamMilkAction');
-    if (wholeMilk) wholeMilk.onclick = (e) => {
-      e.stopPropagation();
-      this.heldItem = "Whole Milk Steaming Pitcher";
-      this.updateHeldDisplay();
-      showToast("SELECTED WHOLE MILK!", "🥛");
-    };
-    if (oatMilk) oatMilk.onclick = (e) => {
-      e.stopPropagation();
-      this.heldItem = "Barista Oat Milk Pitcher";
-      this.updateHeldDisplay();
-      showToast("SELECTED BARISTA OAT MILK!", "🌾");
-    };
-    if (frothBtn) frothBtn.onclick = (e) => {
-      e.stopPropagation();
-      showToast("STEAMING: VELVETY MICROFOAM CREATED!", "💨");
-    };
+    const hotWaterBtn = document.getElementById('btnHotWaterAction');
+
+    if (wholeMilk) {
+      wholeMilk.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.selectMilk('Whole Milk');
+        handleStationWarning(msg);
+      };
+    }
+    if (oatMilk) {
+      oatMilk.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.selectMilk('Oat Milk');
+        handleStationWarning(msg);
+      };
+    }
+    if (frothBtn) {
+      frothBtn.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.frothMilk();
+        handleStationWarning(msg);
+      };
+    }
+    if (hotWaterBtn) {
+      hotWaterBtn.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.addHotWater();
+        handleStationWarning(msg);
+      };
+    }
 
     // Station 4: Syrups
     const syrupCaramel = document.getElementById('btnSyrupCaramel');
     const syrupVanilla = document.getElementById('btnSyrupVanilla');
     const syrupMocha = document.getElementById('btnSyrupMocha');
     const syrupPumpBtn = document.getElementById('btnPumpSyrupAction');
-    if (syrupCaramel) syrupCaramel.onclick = (e) => { e.stopPropagation(); showToast("+1 PUMP CARAMEL SYRUP!", "🍯"); };
-    if (syrupVanilla) syrupVanilla.onclick = (e) => { e.stopPropagation(); showToast("+1 PUMP FRENCH VANILLA!", "✨"); };
-    if (syrupMocha) syrupMocha.onclick = (e) => { e.stopPropagation(); showToast("+1 PUMP DARK MOCHA!", "🍫"); };
-    if (syrupPumpBtn) syrupPumpBtn.onclick = () => showToast("+1 SYRUP PUMP ADDED!", "🍯");
 
-    // Station 5: Cup & Ice
-    const cupStack = document.getElementById('btnSelectCup');
-    const iceBin = document.getElementById('btnScoopIce');
+    if (syrupCaramel) {
+      syrupCaramel.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.addSyrup('Caramel');
+        handleStationWarning(msg);
+      };
+    }
+    if (syrupVanilla) {
+      syrupVanilla.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.addSyrup('Vanilla');
+        handleStationWarning(msg);
+      };
+    }
+    if (syrupMocha) {
+      syrupMocha.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.addSyrup('Mocha');
+        handleStationWarning(msg);
+      };
+    }
+    if (syrupPumpBtn) {
+      syrupPumpBtn.onclick = (e) => {
+        e.stopPropagation();
+        const target = gameState.getSelectedOrder();
+        const flavor = (target && target.syrup && target.syrup !== 'None') ? target.syrup : 'Caramel';
+        const msg = gameState.addSyrup(flavor);
+        handleStationWarning(msg);
+      };
+    }
+
+    // Station 5: Ice Station (1, 2, or 3 Scoops)
     const iceBtn = document.getElementById('btnIceAction');
-    if (cupStack) cupStack.onclick = (e) => {
-      e.stopPropagation();
-      this.heldItem = "Large To-Go Cup (Lidded)";
-      this.updateHeldDisplay();
-      showToast("GRABBED 16oz TO-GO CUP!", "🥤");
-    };
-    if (iceBin) iceBin.onclick = (e) => { e.stopPropagation(); showToast("ICE CUBES ADDED TO CUP!", "🧊"); };
-    if (iceBtn) iceBtn.onclick = () => showToast("ICE CUBES ADDED TO CUP!", "🧊");
+    const ice1Btn = document.getElementById('btnIce1');
+    const ice2Btn = document.getElementById('btnIce2');
+    const ice3Btn = document.getElementById('btnIce3');
+    const iceBin = document.getElementById('btnScoopIce');
+    const iceStation = document.getElementById('stationCups') || document.getElementById('stationIce');
 
-    // Counter Top Props
-    const serveZone = document.getElementById('serveZoneBtn');
-    const spongeBtn = document.getElementById('cleanSpongeBtn');
-    const registerBtn = document.getElementById('cashRegisterBtn');
+    if (ice1Btn) {
+      ice1Btn.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.setIce(1);
+        handleStationWarning(msg);
+      };
+    }
+    if (ice2Btn) {
+      ice2Btn.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.setIce(2);
+        handleStationWarning(msg);
+      };
+    }
+    if (ice3Btn) {
+      ice3Btn.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.setIce(3);
+        handleStationWarning(msg);
+      };
+    }
+    if (iceBtn) {
+      iceBtn.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.addIce();
+        handleStationWarning(msg);
+      };
+    }
+    if (iceBin) {
+      iceBin.onclick = (e) => {
+        e.stopPropagation();
+        const msg = gameState.addIce();
+        handleStationWarning(msg);
+      };
+    }
+    if (iceStation) {
+      iceStation.onclick = (e) => {
+        if (e.target.closest('button')) return;
+        const msg = gameState.addIce();
+        handleStationWarning(msg);
+      };
+    }
+
+    // Tray Bottom Actions
+    const cleanSpillBtn = document.getElementById('btnCleanSpill');
     const serveDrinkBtn = document.getElementById('btnServeDrink');
     const dumpDrinkBtn = document.getElementById('btnDumpDrink');
 
-    const handleServe = () => {
-      this.cash += 6.50;
-      const cashEl = document.getElementById('hudCashAmount');
-      if (cashEl) cashEl.innerText = `$${this.cash.toFixed(2)}`;
-      this.heldItem = "Empty Hands (Ready)";
-      this.updateHeldDisplay();
-      showToast("ORDER DELIVERED! COMMUTER CAFFEINATED! +$6.50", "🎉");
-    };
+    if (cleanSpillBtn) {
+      cleanSpillBtn.onclick = () => {
+        gameState.cleanCounter();
+        this.updateGameHUD();
+        this.updateWorkstation();
+      };
+    }
 
-    if (serveZone) serveZone.onclick = handleServe;
-    if (serveDrinkBtn) serveDrinkBtn.onclick = handleServe;
+    if (serveDrinkBtn) {
+      serveDrinkBtn.onclick = () => {
+        const res = gameState.serveCurrentDrink();
+        if (!res.success) {
+          showToast(res.message, "⚠️");
+        }
+      };
+    }
 
-    if (dumpDrinkBtn) dumpDrinkBtn.onclick = () => {
-      this.heldItem = "Empty Hands (Cleared)";
-      this.updateHeldDisplay();
-      showToast("CLEARED WORKBENCH!", "🗑️");
-    };
-
-    if (spongeBtn) spongeBtn.onclick = () => showToast("COUNTER CLEANED & SPARKLING!", "✨");
-    if (registerBtn) registerBtn.onclick = () => showToast(`CASH TILL TOTAL: $${this.cash.toFixed(2)}`, "💵");
-  }
-
-  updateHeldDisplay() {
-    const heldEl = document.getElementById('playerHeldDisplay');
-    if (heldEl) heldEl.innerText = this.heldItem;
+    if (dumpDrinkBtn) {
+      dumpDrinkBtn.onclick = () => {
+        gameState.dumpDrink();
+      };
+    }
   }
 
   bindResultsScreenEvents() {
@@ -296,10 +635,12 @@ class NavigationController {
     if (backBtn) backBtn.onclick = () => this.navigateTo('main-menu');
 
     const claimNextBtn = document.getElementById('btnResultsClaimNext');
-    if (claimNextBtn) claimNextBtn.onclick = () => {
-      showToast("REWARDS CLAIMED! NEXT SHIFT STARTING!", "🎉");
-      this.navigateTo('game');
-    };
+    if (claimNextBtn) {
+      claimNextBtn.onclick = () => {
+        showToast("NEXT SHIFT INCOMING! ALL ABOARD!", "⚡");
+        this.navigateTo('game');
+      };
+    }
 
     const upgradesBtn = document.getElementById('btnResultsUpgrades');
     if (upgradesBtn) upgradesBtn.onclick = () => this.navigateTo('upgrades');
@@ -312,7 +653,7 @@ class NavigationController {
     const backBtn = document.getElementById('btnUpgradesBack');
     if (backBtn) backBtn.onclick = () => this.navigateTo('main-menu');
 
-    // Tabs
+    // Filter Tabs
     document.querySelectorAll('.dev-btn[data-cat]').forEach(tab => {
       tab.onclick = () => {
         const cat = tab.getAttribute('data-cat');
@@ -324,11 +665,15 @@ class NavigationController {
     // Purchase buttons
     document.querySelectorAll('.btn-upgrade-buy').forEach(btn => {
       btn.onclick = () => {
-        const price = btn.getAttribute('data-price');
-        showToast(`UPGRADE PURCHASED! (-$${price})`, "⚡");
-        btn.innerText = "✓ UPGRADED";
-        btn.classList.remove('game-btn-amber');
-        btn.classList.add('game-btn-emerald');
+        const card = btn.closest('.upgrade-card');
+        const upgradeId = card?.getAttribute('data-upgrade-id') || btn.getAttribute('data-upgrade-id');
+        if (!upgradeId) return;
+
+        const res = gameState.buyUpgrade(upgradeId);
+        showToast(res.message, res.success ? "⚡" : "⚠️");
+        if (res.success) {
+          this.render();
+        }
       };
     });
   }
@@ -337,33 +682,64 @@ class NavigationController {
     const backBtn = document.getElementById('btnSettingsBack');
     if (backBtn) backBtn.onclick = () => this.navigateTo('main-menu');
 
-    // Sliders
     const masterSlider = document.getElementById('sliderMasterVol');
     if (masterSlider) {
+      masterSlider.value = gameState.settings.masterVolume;
       masterSlider.oninput = (e) => {
-        document.getElementById('labelMasterVol').innerText = `${e.target.value}%`;
+        const val = Number(e.target.value);
+        document.getElementById('labelMasterVol').innerText = `${val}%`;
+        gameState.settings.masterVolume = val;
+        audioSystem.updateVolumes({ masterVolume: val });
+        gameState.save();
       };
     }
+
     const musicSlider = document.getElementById('sliderMusicVol');
     if (musicSlider) {
+      musicSlider.value = gameState.settings.musicVolume;
       musicSlider.oninput = (e) => {
-        document.getElementById('labelMusicVol').innerText = `${e.target.value}%`;
+        const val = Number(e.target.value);
+        document.getElementById('labelMusicVol').innerText = `${val}%`;
+        gameState.settings.musicVolume = val;
+        audioSystem.updateVolumes({ musicVolume: val });
+        gameState.save();
       };
     }
+
     const sfxSlider = document.getElementById('sliderSfxVol');
     if (sfxSlider) {
+      sfxSlider.value = gameState.settings.sfxVolume;
       sfxSlider.oninput = (e) => {
-        document.getElementById('labelSfxVol').innerText = `${e.target.value}%`;
+        const val = Number(e.target.value);
+        document.getElementById('labelSfxVol').innerText = `${val}%`;
+        gameState.settings.sfxVolume = val;
+        audioSystem.updateVolumes({ sfxVolume: val });
+        gameState.save();
       };
     }
 
     // Toggles
-    ['toggleHaptics', 'toggleScreenShake', 'toggleRushFlashes'].forEach(id => {
+    const toggleMap = {
+      toggleHaptics: 'hapticFeedback',
+      toggleScreenShake: 'screenShake',
+      toggleRushFlashes: 'rushFlashes'
+    };
+
+    Object.entries(toggleMap).forEach(([id, settingKey]) => {
       const toggle = document.getElementById(id);
       if (toggle) {
+        if (gameState.settings[settingKey]) {
+          toggle.classList.add('active');
+        } else {
+          toggle.classList.remove('active');
+        }
+
         toggle.onclick = () => {
-          toggle.classList.toggle('active');
-          showToast("SETTING UPDATED", "⚙️");
+          gameState.settings[settingKey] = !gameState.settings[settingKey];
+          toggle.classList.toggle('active', gameState.settings[settingKey]);
+          audioSystem.updateVolumes(gameState.settings);
+          gameState.save();
+          showToast(`${settingKey.toUpperCase()} UPDATED`, "⚙️");
         };
       }
     });

@@ -17,27 +17,49 @@
 /* LAYER 0: IN-GAME MINIMAL HUD                                              */
 /* ========================================================================= */
 .game-hud-bar {
-  position: absolute;
-  top: 4px;
-  left: 6px;
-  right: 6px;
+  position: relative;
+  width: 100%;
   z-index: 50;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 6px 8px;
+  flex-shrink: 0;
+  background: rgba(18, 14, 34, 0.95);
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   pointer-events: auto;
 }
 
 .hud-train-alert {
   display: flex;
   align-items: center;
-  gap: 5px;
-  background: rgba(27, 21, 46, 0.92);
+  gap: 6px;
+  background: rgba(27, 21, 46, 0.95);
   border: 2px solid rgba(251, 191, 36, 0.85);
   border-radius: var(--border-radius-full);
-  padding: 3px 8px;
+  padding: 3px 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
+}
+
+.hud-platform-tag {
+  font-size: 10.5px;
+  font-weight: 900;
+  color: #fde68a;
+  letter-spacing: 0.5px;
+}
+
+.hud-status-badge {
+  background: rgba(6, 78, 59, 0.9);
+  color: #34d399;
+  border: 1px solid #10b981;
+  border-radius: 4px;
+  padding: 1.5px 6px;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
 }
 
 .hud-train-timer {
@@ -55,22 +77,43 @@
 .hud-right-group {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
+  flex-shrink: 0;
 }
+
+.hud-vibe-label {
+  font-size: 8px;
+  font-weight: 900;
+  color: #fde047;
+}
+
+.middle-game-container {
+  position: relative;
+  width: 100%;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-top: 0;
+  padding-top: 4px;
+  flex-shrink: 0;
+}
+
 
 .hud-chaos-box {
   display: flex;
   align-items: center;
   gap: 4px;
   background: rgba(27, 21, 46, 0.92);
-  border: 2px solid #ea580c;
+  border: 1.5px solid #ea580c;
   border-radius: var(--border-radius-full);
   padding: 3px 6px;
+  flex-shrink: 0;
 }
 
 .hud-chaos-track {
-  width: 48px;
-  height: 8px;
+  width: 40px;
+  height: 7px;
   background: #090710;
   border-radius: 4px;
   overflow: hidden;
@@ -86,18 +129,34 @@
 }
 
 .hud-pause-btn {
-  width: 28px;
+  width: 30px;
   height: 28px;
+  min-width: 30px;
   background: #281f45;
-  border: 2px solid #55448c;
-  border-radius: 8px;
-  color: #cbd5e1;
-  font-size: 11px;
+  border: 2px solid #818cf8;
+  border-radius: 7px;
+  color: #f8fafc;
+  font-size: 12px;
+  font-weight: 900;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 2px 0 #120e21;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.hud-pause-btn:hover {
+  background: #372b5f;
+  border-color: #a5b4fc;
+  transform: translateY(-1px);
+}
+
+.hud-pause-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 0 #120e21;
 }
 
 /* ========================================================================= */
@@ -120,29 +179,29 @@
 .subway-upper-vault {
   position: relative;
   width: 100%;
-  height: 110px;
+  height: 48px;
   background: #161224;
-  border-bottom: 3px solid #0d0a17;
+  border-bottom: 2px solid #0d0a17;
   overflow: hidden;
   flex-shrink: 0;
 }
 
 .subway-pipe-horiz {
   position: absolute;
-  top: 8px;
+  top: 4px;
   left: 0;
   right: 0;
-  height: 8px;
+  height: 5px;
   background: linear-gradient(180deg, #9a3412 0%, #431407 100%);
   border-bottom: 1px solid #1a0803;
 }
 
 .subway-conduit {
   position: absolute;
-  top: 20px;
+  top: 12px;
   left: 0;
   right: 0;
-  height: 4px;
+  height: 3px;
   background: #475569;
   border-bottom: 1px solid #1e293b;
 }
@@ -158,32 +217,32 @@
 
 .subway-lamp-cord {
   width: 2px;
-  height: 24px;
+  height: 8px;
   background: #64748b;
 }
 
 .subway-lamp-hood {
-  width: 28px;
-  height: 10px;
+  width: 24px;
+  height: 8px;
   background: #334155;
-  border-top-left-radius: 14px;
-  border-top-right-radius: 14px;
-  border: 2px solid #1e293b;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  border: 1.5px solid #1e293b;
 }
 
 .subway-lamp-bulb {
-  width: 20px;
-  height: 6px;
+  width: 16px;
+  height: 5px;
   background: #fcd34d;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
-  box-shadow: 0 0 15px #f59e0b;
+  box-shadow: 0 0 10px #f59e0b;
 }
 
 .subway-light-cone {
-  width: 100px;
-  height: 180px;
-  background: linear-gradient(180deg, rgba(251, 191, 36, 0.18) 0%, rgba(245, 158, 11, 0.04) 55%, transparent 100%);
+  width: 70px;
+  height: 60px;
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.02) 55%, transparent 100%);
   clip-path: polygon(38% 0%, 62% 0%, 100% 100%, 0% 100%);
   pointer-events: none;
 }
@@ -191,17 +250,17 @@
 /* Station Sign */
 .station-direction-sign {
   position: absolute;
-  top: 28px;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
   background: #0b111e;
-  border: 2px solid #3b82f6;
-  border-radius: 6px;
-  padding: 3px 8px;
+  border: 1.5px solid #3b82f6;
+  border-radius: 5px;
+  padding: 2px 6px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  gap: 5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
   white-space: nowrap;
 }
 
@@ -439,8 +498,8 @@
   align-items: flex-end;
   justify-content: space-around;
   padding: 0 6px;
-  margin-top: 2px;
-  margin-bottom: -6px;
+  margin-top: 4px;
+  margin-bottom: -4px;
 }
 
 .customer-card {
@@ -458,29 +517,44 @@
 
 /* Speech Bubble Order Demand */
 .customer-speech-bubble {
-  margin-bottom: 3px;
+  margin-bottom: 5px;
   background: #ffffff;
-  border: 2.5px solid #1e1b2e;
-  border-radius: 10px;
-  padding: 3px 6px;
-  box-shadow: 0 3px 0 #181524;
+  border: 1.5px solid #1e1b2e;
+  border-radius: 6px;
+  padding: 2px 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   gap: 4px;
-  max-width: 110px;
+  max-width: 120px;
   white-space: nowrap;
+  position: relative;
+  z-index: 25;
+}
+
+.customer-speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px 4px 0;
+  border-style: solid;
+  border-color: #1e1b2e transparent transparent;
+  display: block;
+  width: 0;
 }
 
 .bubble-drink-icon {
   width: 18px;
   height: 18px;
   background: #fef3c7;
-  border: 1.5px solid #78350f;
+  border: 1px solid #78350f;
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .bubble-text-col {
@@ -490,28 +564,29 @@
 }
 
 .bubble-title {
-  font-size: 7.5px;
+  font-size: 9px;
   font-weight: 900;
-  line-height: 1;
+  line-height: 1.1;
   color: #1e1b2e;
   text-transform: uppercase;
 }
 
 .bubble-subtitle {
-  font-size: 6px;
-  font-weight: 800;
+  font-size: 7.5px;
+  font-weight: 700;
   color: #64748b;
   margin-top: 1px;
+  line-height: 1;
 }
 
 .bubble-urgency-badge {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 900;
 }
 
@@ -540,7 +615,7 @@
 
 .ticket-rail-bar {
   width: 100%;
-  height: 24px;
+  height: 28px;
   background: #334155;
   border-top: 2px solid #1e1b2e;
   border-bottom: 2px solid #1e1b2e;
@@ -552,7 +627,7 @@
 
 .ticket-rail-slot {
   width: 100%;
-  height: 4px;
+  height: 6px;
   background: #0f172a;
   border-radius: 2px;
   display: flex;
@@ -565,17 +640,18 @@
   background: #fef3c7;
   border: 1.5px solid #1e1b2e;
   border-top: none;
-  border-radius: 0 0 5px 5px;
-  padding: 2px 6px;
-  font-size: 7.5px;
-  font-weight: 800;
+  border-radius: 0 0 6px 6px;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 900;
   color: #1e1b2e;
   box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   cursor: pointer;
 }
+
 
 .counter-wood-shelf {
   position: relative;
@@ -656,49 +732,112 @@
 /* ========================================================================= */
 /* LAYER 4: PLAYABLE WORKSTATION (5 INTERACTIVE STATIONS)                     */
 /* ========================================================================= */
+#workstationContainer {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 40;
+  overflow: hidden;
+}
+
 .workstation-container {
   position: relative;
   width: 100%;
   flex: 1;
+  min-height: 0;
   background: linear-gradient(180deg, #241d3d 0%, #1a152d 55%, #120e20 100%);
-  padding: 5px;
+  padding: 4px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 4px;
   border-top: 2px solid #0f0c1b;
+  overflow: visible;
   z-index: 40;
 }
 
 .stations-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 4px;
-  height: calc(100% - 46px);
   width: 100%;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+#stationGrind {
+  grid-column: span 2;
+}
+
+#stationEspresso {
+  grid-column: span 2;
+}
+
+#stationMilk {
+  grid-column: span 2;
+}
+
+#stationSyrup {
+  grid-column: span 3;
+}
+
+#stationCups {
+  grid-column: span 3;
 }
 
 .station-cell {
   background: #19142b;
   border: var(--game-border-width) solid var(--game-border-color);
   border-radius: var(--border-radius);
-  padding: 4px 2px;
+  padding: 4px 5px;
   box-shadow: var(--game-shadow-sm);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  min-width: 0;
+  width: 100%;
+}
+
+.station-cell-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 4px;
+  padding: 0 1px;
 }
 
 .station-title {
   font-family: var(--font-arcade);
+  font-size: 10.5px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 0;
+  line-height: 1;
+}
+
+.station-indicator-tag {
   font-size: 8px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
-  margin-bottom: 2px;
+  line-height: 1;
 }
+
+.station-btn-container {
+  width: 100%;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
 
 /* Station 1: Grinder */
 .grinder-hopper {
@@ -885,6 +1024,328 @@
 .syrup-mocha { background: #3b1a0e; }
 
 /* Station 5: Cups & Ice */
+.cup-size-picker-row {
+  display: flex;
+  gap: 2.5px;
+  width: 100%;
+}
+.cup-size-btn {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #0f172a;
+  border: 1.5px solid #334155;
+  border-radius: 4px;
+  padding: 3px 1px;
+  min-height: 32px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.cup-size-btn:hover {
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+}
+.cup-size-btn.active {
+  border-color: #22d3ee;
+  background: rgba(34, 211, 238, 0.25);
+  box-shadow: 0 0 8px rgba(34, 211, 238, 0.8);
+  transform: translateY(-1px);
+}
+.cup-code {
+  font-size: 11px;
+  font-weight: 900;
+  color: #f8fafc;
+  line-height: 1;
+}
+.cup-size-btn.active .cup-code {
+  color: #38bdf8;
+}
+.cup-oz {
+  font-size: 7.5px;
+  font-weight: 800;
+  color: #94a3b8;
+  line-height: 1;
+  margin-top: 2px;
+}
+.cup-size-btn.active .cup-oz {
+  color: #e0f2fe;
+}
+
+.syrup-count-badge {
+  font-size: 8.5px;
+  font-weight: 900;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* ACTIVE TARGET RECIPE STRIP */
+.active-order-strip {
+  width: 100%;
+  background: #17122b;
+  border: 1.5px solid #f59e0b;
+  border-radius: 6px;
+  padding: 5px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 2px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+.active-order-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.active-order-title-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.active-order-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+.active-order-num {
+  font-size: 10px;
+  font-weight: 900;
+  color: #fbbf24;
+}
+.active-order-drink {
+  font-size: 12.5px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+}
+.active-order-customer {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #94a3b8;
+}
+.active-order-price-tag {
+  font-size: 11px;
+  font-weight: 900;
+  color: #34d399;
+  background: rgba(6, 78, 59, 0.7);
+  border: 1px solid #059669;
+  border-radius: 4px;
+  padding: 1.5px 6px;
+}
+.active-order-bill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(15, 12, 28, 0.85);
+  border: 1px solid #3b3158;
+  border-radius: 5px;
+  padding: 2px 7px;
+  font-size: 9.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.active-order-bill-tag .bill-item {
+  color: #cbd5e1;
+  font-weight: 700;
+}
+.active-order-bill-tag .bill-tip-positive {
+  color: #34d399;
+  font-weight: 800;
+}
+.active-order-bill-tag .bill-tip-none {
+  color: #94a3b8;
+  font-weight: 700;
+}
+.active-order-bill-tag .bill-total {
+  color: #facc15;
+  font-weight: 900;
+  font-family: var(--font-numeric);
+}
+.active-recipe-checklist {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.recipe-chip {
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 2.5px 6.5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+.chip-pending {
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid #475569;
+}
+.chip-ok {
+  background: #064e3b;
+  color: #34d399;
+  border: 1px solid #059669;
+  box-shadow: 0 0 6px rgba(52, 211, 153, 0.5);
+}
+.chip-warning {
+  background: #7f1d1d;
+  color: #fca5a5;
+  border: 1px solid #ef4444;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);
+}
+.chip-ready {
+  background: #047857;
+  color: #a7f3d0;
+  border: 1px solid #34d399;
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.75);
+}
+.recipe-inspect-btn {
+  background: #312e81;
+  border: 1.5px solid #6366f1;
+  border-radius: 4px;
+  color: #e0e7ff;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 3px 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+.recipe-inspect-btn:hover {
+  background: #4338ca;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+}
+
+/* DEDICATED CURRENT CUP CONTENTS PANEL ("WHICH INGREDIENTS ARE THERE") */
+.current-cup-indicator {
+  width: 100%;
+  height: 28px;
+  min-height: 28px;
+  max-height: 28px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  padding: 2px 6px;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  transition: all 0.15s ease;
+}
+.current-cup-indicator.has-cup {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1.5px solid #38bdf8;
+}
+.current-cup-indicator.empty-cup {
+  background: rgba(30, 27, 46, 0.85);
+  border: 1.5px dashed #64748b;
+}
+.cup-indicator-label {
+  font-size: 8.5px;
+  font-weight: 900;
+  color: #94a3b8;
+  letter-spacing: 0.4px;
+  font-family: var(--font-arcade);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.cup-indicator-size-tag {
+  font-size: 9px;
+  font-weight: 900;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.18);
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.cup-indicator-prompt {
+  font-size: 9px;
+  font-weight: 800;
+  color: #fde68a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cup-ingredients-tags-list {
+  display: flex;
+  align-items: center;
+  gap: 3.5px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+}
+.cup-ingredients-tags-list::-webkit-scrollbar {
+  display: none;
+}
+.cup-ing-pill {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.cup-ing-pill.ing-active {
+  background: #064e3b;
+  color: #6ee7b7;
+  border: 1px solid #059669;
+}
+.cup-ing-pill.ing-none {
+  background: #1e293b;
+  color: #64748b;
+  border: 1px solid #334155;
+}
+.cup-ing-pill.ing-ice {
+  background: #0c4a6e;
+  color: #7dd3fc;
+  border: 1px solid #0284c7;
+}
+.cup-ing-pill.ing-hot {
+  background: #451a03;
+  color: #fed7aa;
+  border: 1px solid #9a3412;
+}
+.cup-ing-pill.ing-ready {
+  background: linear-gradient(90deg, #059669, #10b981);
+  color: #ffffff;
+  border: 1px solid #34d399;
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.7);
+  font-weight: 900;
+}
+
+.customer-card-selected {
+  border: 2px solid #f59e0b !important;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.7) !important;
+  transform: translateY(-2px);
+}
+.ticket-selected {
+  border-color: #f59e0b !important;
+  background: #fffbeb !important;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.6) !important;
+}
+
+.station-sublabel {
+  font-size: 8.5px;
+  font-weight: 800;
+  text-align: center;
+  margin-top: 2px;
+}
+
+
 .cups-stack-col {
   display: flex;
   flex-direction: column;
@@ -911,8 +1372,8 @@
 }
 
 .ice-bin-box {
-  width: 20px;
-  height: 26px;
+  width: 18px;
+  height: 22px;
   background: rgba(8, 145, 178, 0.4);
   border: 1.5px solid #22d3ee;
   border-radius: 4px;
@@ -926,8 +1387,8 @@
   cursor: pointer;
 }
 .ice-cube {
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   background: #e0f2fe;
   border: 0.5px solid #38bdf8;
   border-radius: 1px;
@@ -938,21 +1399,30 @@
 /* ========================================================================= */
 .barista-player-tray {
   width: 100%;
-  height: 44px;
+  height: 48px;
+  min-height: 48px;
+  max-height: 48px;
+  flex-shrink: 0;
   background: #171227;
   border: var(--game-border-width) solid var(--game-border-color);
   border-radius: var(--border-radius);
-  padding: 4px 8px;
-  box-shadow: var(--game-shadow);
+  padding: 3px 8px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 6px;
+  z-index: 45;
+  position: relative;
 }
 
 .player-avatar-badge {
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+  flex: 1;
 }
 
 .barista-head-icon {
@@ -966,6 +1436,7 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 0 #120e21;
+  flex-shrink: 0;
 }
 
 .barista-visor {
@@ -981,20 +1452,28 @@
 .barista-info-col {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .barista-name {
   font-family: var(--font-arcade);
-  font-size: 8.5px;
+  font-size: 9.5px;
   color: #fcd34d;
-  line-height: 1;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .barista-held-pill {
-  font-size: 7.5px;
+  font-size: 9px;
   font-weight: 800;
   color: #94a3b8;
   margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .barista-held-item {
   color: #34d399;
@@ -1004,5 +1483,6 @@
 .player-action-buttons {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  flex-shrink: 0;
 }

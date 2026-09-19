@@ -24,15 +24,14 @@ export function renderResultsScreen(results = MOCK_SHIFT_RESULTS) {
 
         <!-- 3 Golden Coffee Beans Rating -->
         <div style="display: flex; gap: 10px; margin: 10px 0;">
-          <div style="width: 36px; height: 36px; background: #f59e0b; border: 3px solid #78350f; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 0 #3b1803, 0 0 15px #f59e0b; animation: starReveal 0.4s ease forwards;">
-            ☕
-          </div>
-          <div style="width: 36px; height: 36px; background: #f59e0b; border: 3px solid #78350f; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 0 #3b1803, 0 0 15px #f59e0b; animation: starReveal 0.4s ease 0.15s forwards;">
-            ☕
-          </div>
-          <div style="width: 36px; height: 36px; background: #f59e0b; border: 3px solid #78350f; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 0 #3b1803, 0 0 15px #f59e0b; animation: starReveal 0.4s ease 0.3s forwards;">
-            ☕
-          </div>
+          ${[0, 1, 2].map((i) => {
+            const isEarned = i < (results.beans !== undefined ? results.beans : 3);
+            return `
+              <div style="width: 36px; height: 36px; background: ${isEarned ? '#f59e0b' : '#2d244c'}; border: 3px solid ${isEarned ? '#78350f' : '#1e1933'}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: ${isEarned ? '0 4px 0 #3b1803, 0 0 15px #f59e0b' : 'none'}; animation: starReveal 0.4s ease ${i * 0.15}s forwards; filter: ${isEarned ? 'none' : 'grayscale(1) opacity(0.4)'};">
+                ☕
+              </div>
+            `;
+          }).join('')}
         </div>
 
         <!-- Grade Badge -->

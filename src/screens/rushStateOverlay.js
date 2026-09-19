@@ -20,18 +20,18 @@ export function renderRushBanner(isRushActive = false) {
     `;
   }
 
-  // Preparation / Warmup state banner
+  // Relaxed Open Service status banner
   return `
     <div id="rushStateBanner" class="rush-banner prep" style="position: absolute; top: 38px; left: 8px; right: 8px; z-index: 60; pointer-events: none; animation: screenEnter 0.2s ease;">
       <div style="background: rgba(30, 27, 46, 0.95); border: 2px solid #38bdf8; border-radius: 10px; padding: 3px 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(4px);">
         <div style="display: flex; align-items: center; gap: 6px;">
-          <span style="font-size: 12px;">⏱️</span>
+          <span style="font-size: 12px;">☕</span>
           <div>
-            <div class="pixel-font" style="font-size: 8px; color: #7dd3fc;">PREP PHASE: TRAIN INCOMING</div>
-            <div style="font-size: 6.5px; color: #cbd5e1; font-weight: 700;">Check bean hoppers, chill ice, steam milk</div>
+            <div class="pixel-font" style="font-size: 8px; color: #7dd3fc;">COMMUTER PLATFORM OPEN</div>
+            <div style="font-size: 6.5px; color: #cbd5e1; font-weight: 700;">Commuters wait patiently • Tap tickets to target recipes</div>
           </div>
         </div>
-        <span style="font-size: 7px; color: #facc15; font-weight: 900;" class="pixel-font">GET READY</span>
+        <span style="font-size: 7px; color: #a7f3d0; font-weight: 900;" class="pixel-font">READY TO BREW</span>
       </div>
     </div>
   `;

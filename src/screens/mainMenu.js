@@ -2,7 +2,11 @@
 /* MAIN MENU SCREEN                                                          */
 /* ========================================================================= */
 
-export function renderMainMenu() {
+export function renderMainMenu(player = {}) {
+  const level = player.level || 4;
+  const cash = player.cash !== undefined ? Math.round(player.cash) : 437;
+  const tokens = player.tokens !== undefined ? player.tokens : 12;
+
   return `
     <div class="main-menu-container screen-animate-in" style="position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 20px 16px; background: radial-gradient(circle at 50% 25%, #2a1f47 0%, #17122b 55%, #0d0a19 100%); overflow-y: auto;">
 
@@ -17,7 +21,7 @@ export function renderMainMenu() {
             ★
           </div>
           <div style="display: flex; flex-direction: column;">
-            <span class="pixel-font" style="font-size: 8px; color: #fef08a;">LVL 4 BARISTA</span>
+            <span class="pixel-font" style="font-size: 8px; color: #fef08a;">LVL ${level} BARISTA</span>
             <span style="font-size: 7px; color: #94a3b8; font-weight: 800;">PLATFORM 9 KIOSK</span>
           </div>
         </div>
@@ -26,11 +30,11 @@ export function renderMainMenu() {
         <div style="display: flex; align-items: center; gap: 6px;">
           <div class="game-pill pill-coin">
             <div class="pill-coin-icon">¢</div>
-            <span>$437</span>
+            <span>$${cash}</span>
           </div>
           <div class="game-pill pill-token">
             <div class="pill-token-icon">T</div>
-            <span>12</span>
+            <span>${tokens}</span>
           </div>
         </div>
       </div>
