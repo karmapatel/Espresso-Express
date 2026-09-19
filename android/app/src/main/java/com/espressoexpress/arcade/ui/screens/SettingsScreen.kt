@@ -48,7 +48,7 @@ fun SettingsScreen(
             null
         }
     }
-    val currentVersionName = packageInfo?.versionName ?: "1.0.1"
+    val currentVersionName = com.espressoexpress.arcade.BuildConfig.VERSION_NAME
     var checkUpdateStatus by remember { mutableStateOf("Ready to check") }
 
     Box(
@@ -261,12 +261,7 @@ fun SettingsScreen(
                                 val apkUrl = json.optString("apkUrl", "")
 
                                 // Get package versionCode
-                                val currentCode = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                                    packageInfo?.longVersionCode?.toInt() ?: 101
-                                } else {
-                                    @Suppress("DEPRECATION")
-                                    packageInfo?.versionCode ?: 101
-                                }
+                                val currentCode = com.espressoexpress.arcade.BuildConfig.VERSION_CODE
 
                                 if (serverVersionCode > currentCode) {
                                     checkUpdateStatus = "New build v$serverVersionName ready!"

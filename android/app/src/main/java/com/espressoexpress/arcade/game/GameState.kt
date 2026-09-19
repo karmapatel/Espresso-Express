@@ -390,7 +390,6 @@ class GameState(
         if (selectedOrderId == null) {
             selectedOrderId = ticket.id
         }
-        triggerToast("NEW ORDER: ${ticket.customerName} wants ${ticket.drinkName}!", "👥")
     }
 
     private fun handleOrderFailed(order: OrderTicket) {
