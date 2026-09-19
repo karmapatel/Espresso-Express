@@ -829,15 +829,16 @@ fun GameScreen(
             }
 
             // 6. BOTTOM PINNED BARISTA PLAYER TRAY & GLOBAL CONTROLS
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFF130E26))
-                    .border(top = 3.dp, color = Color(0xFF1A162B))
-                    .padding(horizontal = 14.dp, vertical = 10.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Box(modifier = Modifier.fillMaxWidth().height(3.dp).background(Color(0xFF1A162B)))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFF130E26))
+                        .padding(horizontal = 14.dp, vertical = 10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                 // Barista Avatar badge (with visor)
                 Box(
                     modifier = Modifier
@@ -968,6 +969,7 @@ fun GameScreen(
                             color = Color.White
                         )
                     }
+                }
                 }
             }
         }
