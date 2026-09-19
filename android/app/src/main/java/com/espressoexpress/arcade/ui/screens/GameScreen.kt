@@ -291,8 +291,7 @@ fun GameScreen(
                             Button(
                                 onClick = { gameState.addSyrup("Vanilla") },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFCD34D)),
-                                modifier = Modifier.weight(1f),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6B5A10))
+                                modifier = Modifier.weight(1f)
                             ) { Text("🍦 VANILLA", fontSize = 10.sp) }
                             
                             Button(
