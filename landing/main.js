@@ -144,8 +144,42 @@ function initDownloadButtons() {
   ].filter(Boolean);
 
   downloadButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      showToast('downloading...', '📦');
+    btn.addEventListener('click', async (e) => {
+      const href = btn.getAttribute('href');
+      // If it is a local relative URL, handle it via Blob downloading to guarantee security cookies are sent!
+      if (href && (href.startsWith('/') || href.includes(window.location.hostname)) && href.endsWith('.apk')) {
+        e.preventDefault();
+        showToast('Initiating secure session download...', '🔒');
+        
+        try {
+          const response = await fetch(href);
+          if (!response.ok) throw new Error(`HTTP status ${response.status}`);
+          
+          showToast('Downloading APK binary...', '📶');
+          const blob = await response.blob();
+          const blobUrl = window.URL.createObjectURL(blob);
+          
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = blobUrl;
+          a.download = href.split('/').pop() || 'EspressoExpress.apk';
+          document.body.appendChild(a);
+          a.click();
+          
+          setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(blobUrl);
+            showToast('Download complete!', '✅');
+          }, 100);
+        } catch (error) {
+          console.error("Secure fetch download failed, falling back to direct anchor stream.", error);
+          showToast('Direct stream fallback initiated...', '⚠️');
+          // Fallback to letting the browser handle the navigation directly
+          window.location.href = href;
+        }
+      } else {
+        showToast('Initiating update download...', '📦');
+      }
     });
   });
 }
@@ -193,10 +227,26 @@ function initScrollHeader() {
 /* 5. GITHUB RELEASE SYNCHRONIZER                                            */
 /* ------------------------------------------------------------------------- */
 async function fetchLatestRelease() {
+  let downloadUrl = "/downloads/EspressoExpress.apk";
+  let version = "1.1.0";
+
+  // Try to find the local version.json first to be accurate to local deployments
+  try {
+    const localRes = await fetch('/version.json');
+    if (localRes.ok) {
+      const localData = await localRes.json();
+      if (localData.versionName) {
+        version = localData.versionName;
+      }
+    }
+  } catch (e) {
+    console.warn("Failed to fetch local version.json", e);
+  }
+
   // Try to find the GitHub repository path dynamically from the page
   const githubLinkEl = document.querySelector('a[href*="github.com"]');
-  let repoPath = "karmapatel/Espresso-Express"; // default fallback
   if (githubLinkEl) {
+    let repoPath = "";
     try {
       const href = githubLinkEl.getAttribute('href');
       const url = new URL(href);
@@ -205,38 +255,31 @@ async function fetchLatestRelease() {
         repoPath = `${paths[0]}/${paths[1]}`;
       }
     } catch (e) {
-      console.warn("Failed to parse repo path from link, using default.", e);
+      console.warn("Failed to parse repo path from link", e);
     }
-  }
 
-  const defaultApkUrl = `https://github.com/${repoPath}/releases/latest/download/espresso-express.apk`;
-  let downloadUrl = defaultApkUrl;
-  let version = "1.0.0";
-
-  try {
-    const res = await fetch(`https://api.github.com/repos/${repoPath}/releases/latest`);
-    if (res.ok) {
-      const data = await res.json();
-      let rawVersion = data.tag_name ? data.tag_name.replace(/^v/, '') : "1.0.0";
-      
-      if (rawVersion === "latest") {
-        // Fallback to a clean semantic version format if the tag is 'latest'
-        version = "1.0.0";
-      } else {
-        version = rawVersion;
-      }
-      
-      // Look for any asset ending with .apk
-      const apkAsset = data.assets?.find(asset => asset.name.endsWith('.apk'));
-      if (apkAsset) {
-        downloadUrl = apkAsset.browser_download_url;
-      } else {
-        // Fallback construct if no asset attached yet
-        downloadUrl = `https://github.com/${repoPath}/releases/download/${data.tag_name || 'latest'}/espresso-express.apk`;
+    if (repoPath) {
+      try {
+        const res = await fetch(`https://api.github.com/repos/${repoPath}/releases/latest`);
+        if (res.ok) {
+          const data = await res.json();
+          let rawVersion = data.tag_name ? data.tag_name.replace(/^v/, '') : "";
+          if (rawVersion && rawVersion !== "latest") {
+            version = rawVersion;
+          }
+          
+          // Look for any asset ending with .apk
+          const apkAsset = data.assets?.find(asset => asset.name.endsWith('.apk'));
+          if (apkAsset) {
+            downloadUrl = apkAsset.browser_download_url;
+          } else {
+            downloadUrl = `https://github.com/${repoPath}/releases/download/${data.tag_name || 'latest'}/espresso-express.apk`;
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch latest GitHub release, keeping local build.", error);
       }
     }
-  } catch (error) {
-    console.error("Failed to fetch latest GitHub release, using direct build fallback.", error);
   }
 
   // Update all download buttons and anchor links
