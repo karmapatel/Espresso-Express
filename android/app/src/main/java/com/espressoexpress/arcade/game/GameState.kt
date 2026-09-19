@@ -227,6 +227,7 @@ class GameState(
         orderIdCounter = 101
         spawnOrder()
         spawnOrder()
+        spawnOrder()
 
         if (!gameLoopRunning) {
             runGameLoop()
@@ -310,7 +311,9 @@ class GameState(
                     // }
                 }
 
-                if (activeOrders.size < 4 && Random.nextFloat() < 0.25f) {
+                if (activeOrders.size < 3) {
+                    spawnOrder()
+                } else if (activeOrders.size < 4 && Random.nextFloat() < 0.25f) {
                     spawnOrder()
                 }
             }

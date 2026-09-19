@@ -152,23 +152,7 @@ fun GameScreen(
                     )
                 }
 
-                // Inbound Train Timer
-                Column(horizontalAlignment = Alignment.End) {
-                    Text(
-                        text = "TRAIN INBOUND",
-                        fontSize = 8.sp,
-                        fontFamily = FontFamily.Monospace,
-                        color = Color(0xFF94A3B8),
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "0:${if (gameState.trainSecondsLeft < 10) "0" else ""}${gameState.trainSecondsLeft}s",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Black,
-                        color = if (gameState.isRushActive) Color(0xFFEF4444) else Color(0xFFF59E0B),
-                        fontFamily = FontFamily.Monospace
-                    )
-                }
+
             }
             Box(modifier = Modifier.fillMaxWidth().height(3.dp).background(Color(0xFF1A162B)))
 
@@ -648,10 +632,10 @@ fun GameScreen(
                         )
 
                         // Shots Badge
-                        val shotsMatches = gameState.workbench.brewedShots >= currentSelectedOrder.shots
+                        val shotsMatches = gameState.workbench.brewedShots == currentSelectedOrder.shots
                         RecipeChip(
                             label = "SHOTS: ${gameState.workbench.brewedShots}/${currentSelectedOrder.shots}",
-                            status = if (shotsMatches) RecipeStatus.MATCHED else if (gameState.workbench.brewedShots == 0) RecipeStatus.PENDING else RecipeStatus.FAILED
+                            status = if (shotsMatches) RecipeStatus.MATCHED else if (gameState.workbench.brewedShots < currentSelectedOrder.shots) RecipeStatus.PENDING else RecipeStatus.FAILED
                         )
 
                         // Milk Badge
@@ -665,11 +649,30 @@ fun GameScreen(
                         )
 
                         // Syrup Badge
-                        val syrupMatches = (currentSelectedOrder.syrup == "None" && gameState.workbench.syrupType == "None") ||
-                                           (currentSelectedOrder.syrup != "None" && gameState.workbench.syrupType == currentSelectedOrder.syrupFlavor)
+                        val syrupTypeMatches = (currentSelectedOrder.syrupFlavor == "None" && gameState.workbench.syrupType == "None") ||
+                                               (currentSelectedOrder.syrupFlavor != "None" && gameState.workbench.syrupType == currentSelectedOrder.syrupFlavor)
+                        val syrupPumpsMatches = currentSelectedOrder.syrupFlavor == "None" || (gameState.workbench.syrupPumps == currentSelectedOrder.syrupPumps)
+                        val syrupMatches = syrupTypeMatches && syrupPumpsMatches
+
+                        val syrupLabelText = if (currentSelectedOrder.syrupFlavor == "None") {
+                            "SYRUP: NO"
+                        } else {
+                            "SYRUP: ${gameState.workbench.syrupPumps}/${currentSelectedOrder.syrupPumps} ${currentSelectedOrder.syrupFlavor.uppercase()}"
+                        }
+
+                        val syrupStatus = if (syrupMatches) {
+                            RecipeStatus.MATCHED
+                        } else if (gameState.workbench.syrupType == "None") {
+                            RecipeStatus.PENDING
+                        } else if (gameState.workbench.syrupType == currentSelectedOrder.syrupFlavor && gameState.workbench.syrupPumps < currentSelectedOrder.syrupPumps) {
+                            RecipeStatus.PENDING
+                        } else {
+                            RecipeStatus.FAILED
+                        }
+
                         RecipeChip(
-                            label = if (currentSelectedOrder.syrup == "None") "SYRUP: NO" else "SYRUP: ${currentSelectedOrder.syrup.uppercase()}",
-                            status = if (syrupMatches) RecipeStatus.MATCHED else if (gameState.workbench.syrupType == "None") RecipeStatus.PENDING else RecipeStatus.FAILED
+                            label = syrupLabelText,
+                            status = syrupStatus
                         )
 
                         // Ice Badge

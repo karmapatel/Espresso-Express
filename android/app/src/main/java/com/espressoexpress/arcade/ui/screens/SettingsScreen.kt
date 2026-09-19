@@ -38,12 +38,17 @@ fun SettingsScreen(
     val scope = rememberCoroutineScope()
     val packageInfo = remember {
         try {
-            context.packageManager.getPackageInfo(context.packageName, 0)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                context.packageManager.getPackageInfo(context.packageName, android.content.pm.PackageManager.PackageInfoFlags.of(0))
+            } else {
+                @Suppress("DEPRECATION")
+                context.packageManager.getPackageInfo(context.packageName, 0)
+            }
         } catch (e: Exception) {
             null
         }
     }
-    val currentVersionName = packageInfo?.versionName ?: "1.0.0"
+    val currentVersionName = packageInfo?.versionName ?: "1.0.1"
     var checkUpdateStatus by remember { mutableStateOf("Ready to check") }
 
     Box(
@@ -207,6 +212,8 @@ fun SettingsScreen(
                             checkUpdateStatus = "Contacting version registry..."
                             try {
                                 val urls = listOf(
+                                    "https://raw.githubusercontent.com/karmapatel/Espresso-Express/main/public/version.json",
+                                    "https://raw.githubusercontent.com/karmapatel/Espresso-Express/master/public/version.json",
                                     "https://ais-pre-472yxwq4z56wuftegmr7lu-324319867172.asia-southeast1.run.app/version.json",
                                     "https://ais-dev-472yxwq4z56wuftegmr7lu-324319867172.asia-southeast1.run.app/version.json"
                                 )
@@ -226,8 +233,15 @@ fun SettingsScreen(
                                             
                                             val responseCode = connection.responseCode
                                             if (responseCode == java.net.HttpURLConnection.HTTP_OK) {
-                                                resultStr = connection.inputStream.bufferedReader().use { it.readText() }
-                                                break
+                                                val content = connection.inputStream.bufferedReader().use { it.readText() }.trim()
+                                                if (content.startsWith("{") && content.endsWith("}")) {
+                                                    resultStr = content
+                                                    break
+                                                } else if (content.startsWith("<!DOCTYPE") || content.startsWith("<html")) {
+                                                    lastException = Exception("Preview is password protected. Please use GitHub build.")
+                                                } else {
+                                                    lastException = Exception("Invalid response format received")
+                                                }
                                             } else {
                                                 lastException = Exception("HTTP $responseCode from update server")
                                             }
@@ -242,16 +256,16 @@ fun SettingsScreen(
                                 }
 
                                 val json = JSONObject(resultStr!!)
-                                val serverVersionCode = json.optInt("versionCode", 100)
-                                val serverVersionName = json.optString("versionName", "1.0.0")
+                                val serverVersionCode = json.optInt("versionCode", 101)
+                                val serverVersionName = json.optString("versionName", "1.0.1")
                                 val apkUrl = json.optString("apkUrl", "")
 
                                 // Get package versionCode
                                 val currentCode = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                                    packageInfo?.longVersionCode?.toInt() ?: 100
+                                    packageInfo?.longVersionCode?.toInt() ?: 101
                                 } else {
                                     @Suppress("DEPRECATION")
-                                    packageInfo?.versionCode ?: 100
+                                    packageInfo?.versionCode ?: 101
                                 }
 
                                 if (serverVersionCode > currentCode) {
@@ -264,7 +278,7 @@ fun SettingsScreen(
                                     gameState.triggerToast("Already on latest build v$currentVersionName!", "📶")
                                 }
                             } catch (e: Exception) {
-                                val errMsg = e.javaClass.simpleName ?: "Connection Error"
+                                val errMsg = e.message ?: e.javaClass.simpleName ?: "Connection Error"
                                 checkUpdateStatus = "Failed: $errMsg"
                                 gameState.triggerToast("Update check failed: $errMsg", "⚠️")
                             }
