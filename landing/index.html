@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#17122b">
+  <title>Espresso Express - Rush Hour Subway Barista Arcade | Download APK</title>
+  <meta name="description" content="Espresso Express is an adrenaline-pumping 2D mobile arcade coffee simulator set on a bustling subway platform. Brew fast, steam milk, dispense syrups, and beat the train! Download the Android APK now.">
+  <meta property="og:title" content="Espresso Express - 2D Mobile Arcade Coffee Simulator">
+  <meta property="og:description" content="Serve speed, master the steam, and beat the train! Download the Espresso Express APK for Android.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="./assets/hero-banner.jpg">
+
+  <!-- Google Fonts: Bungee (Arcade), Fredoka (Friendly Display), Nunito (Numbers & Details) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400;500;600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+  <!-- Ambient Subway Platform Glow & Light Beams -->
+  <div class="ambient-glow" aria-hidden="true"></div>
+  <div class="subway-grid-overlay" aria-hidden="true"></div>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="site-header" id="siteHeader">
+    <div class="header-inner container">
+      <!-- Logo / Title -->
+      <a href="#hero" class="brand-logo" aria-label="Espresso Express Home">
+        <div class="cup-icon-badge" aria-hidden="true">
+          <span class="cup-emoji">☕</span>
+          <span class="steam-particle steam-1"></span>
+          <span class="steam-particle steam-2"></span>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">ESPRESSO <span class="brand-title-accent">EXPRESS</span></span>
+          <span class="brand-sub">PLATFORM 9 KIOSK</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="desktop-nav" aria-label="Main Navigation">
+        <a href="#about" class="nav-link">About</a>
+        <a href="#features" class="nav-link">Key Features</a>
+        <a href="#stations" class="nav-link">Workstations</a>
+        <a href="#commuters" class="nav-link">Commuters</a>
+        <a href="#download" class="nav-link">Download APK</a>
+      </nav>
+
+      <!-- Header CTA Buttons -->
+      <div class="header-actions">
+        <span class="version-pill" title="Current build version">v1.0.0</span>
+        <a href="/downloads/EspressoExpress.apk" download class="btn-pill-download" id="headerDownloadBtn">
+          <span class="btn-icon">⬇</span>
+          <span>Download APK</span>
+        </a>
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown Navigation -->
+    <div class="mobile-nav-drawer" id="mobileNavDrawer" aria-hidden="true">
+      <a href="#about" class="mobile-nav-link">About Game</a>
+      <a href="#features" class="mobile-nav-link">Key Features</a>
+      <a href="#stations" class="mobile-nav-link">5-Station Bar</a>
+      <a href="#commuters" class="mobile-nav-link">Commuter Cast</a>
+      <a href="#download" class="mobile-nav-link">Download APK (v1.0.0)</a>
+      <div class="mobile-drawer-footer">
+        <a href="/downloads/EspressoExpress.apk" download class="btn-arcade btn-amber mobile-download-action">
+          <span>⚡ GET ESPRESSO EXPRESS APK</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO SECTION -->
+    <section class="hero-section" id="hero">
+      <div class="container hero-grid">
+        <!-- Hero Content Column -->
+        <div class="hero-content">
+          <!-- Subway Station Route Badge -->
+          <div class="subway-route-badge">
+            <span class="blinking-dot"></span>
+            <span class="subway-code">PLATFORM 9</span>
+            <span class="route-separator">•</span>
+            <span>GRAND CENTRAL LINE</span>
+            <span class="rush-indicator">⚡ RUSH HOUR LIVE</span>
+          </div>
+
+          <h1 class="hero-title">
+            <span class="title-top">ESPRESSO</span>
+            <span class="title-bottom">EXPRESS</span>
+          </h1>
+
+          <p class="hero-tagline">
+            Serve Speed. Master the Steam. Beat the Train!
+          </p>
+
+          <p class="hero-description">
+            Step behind the counter of the liveliest underground coffee kiosk in town. Grind fresh beans, calibrate pressure, froth silky milk, and pump sweet syrups for hordes of impatient subway commuters before their outbound trains depart!
+          </p>
+
+          <!-- Primary Download Action Box -->
+          <div class="hero-cta-group">
+            <a href="/downloads/EspressoExpress.apk" download class="btn-arcade btn-arcade-lg btn-amber anim-pulse" id="heroDownloadBtn">
+              <span class="cta-icon-box">⬇</span>
+              <div class="cta-text-col">
+                <span class="cta-title">DOWNLOAD APK</span>
+                <span class="cta-subtitle">Android 8.0+ • Version 1.0.0 (18.4 MB)</span>
+              </div>
+            </a>
+          </div>
+
+          <!-- Quick Trust Badges / Requirements -->
+          <div class="hero-spec-pills">
+            <div class="spec-pill">
+              <span class="spec-icon">📱</span>
+              <span>Android APK</span>
+            </div>
+            <div class="spec-pill">
+              <span class="spec-icon">⚡</span>
+              <span>Fast 60FPS Arcade</span>
+            </div>
+            <div class="spec-pill">
+              <span class="spec-icon">☕</span>
+              <span>No Ads / Free Play</span>
+            </div>
+            <div class="spec-pill">
+              <span class="spec-icon">📶</span>
+              <span>100% Offline Ready</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Artwork / Monitor Frame -->
+        <div class="hero-visual">
+          <div class="arcade-screen-frame">
+            <!-- Screen Top Bezel -->
+            <div class="screen-bezel-top">
+              <div class="bezel-leds">
+                <span class="led led-red"></span>
+                <span class="led led-amber"></span>
+                <span class="led led-green"></span>
+              </div>
+              <span class="screen-label">PLATFORM 9 MONITOR • LIVE KIOSK FEED</span>
+              <span class="screen-rec">● REC</span>
+            </div>
+
+            <!-- Main Hero Image Artwork -->
+            <div class="screen-media-wrapper">
+              <img src="./assets/hero-banner.jpg" alt="Espresso Express 2D cartoon coffee kiosk at bustling underground subway station" class="hero-artwork-img" loading="eager">
+              
+              <!-- Floating Overlay Badges -->
+              <div class="badge-float badge-float-left anim-float-slow">
+                <div class="float-icon">🔥</div>
+                <div class="float-info">
+                  <span class="float-title">COMBO x5!</span>
+                  <span class="float-desc">PERFECT ESPRESSO</span>
+                </div>
+              </div>
+
+              <div class="badge-float badge-float-right anim-float-delayed">
+                <div class="float-icon">⏱️</div>
+                <div class="float-info">
+                  <span class="float-title">TRAIN INBOUND</span>
+                  <span class="float-desc">DEPARTING IN 0:35</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Screen Bottom Bezel -->
+            <div class="screen-bezel-bottom">
+              <div class="ticker-text">
+                ⚡ NOTICE: TRACK 3 CLOSED FOR TRACKWORK • PLATFORM 9 ESPRESSO BAR OPEN 24/7 • DOUBLE SHOTS ON DECK ⚡
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SHORT GAME OVERVIEW / ABOUT -->
+    <section class="section about-section" id="about">
+      <div class="container">
+        <div class="section-badge-center">
+          <span class="badge-pill">GAME OVERVIEW</span>
+        </div>
+        <h2 class="section-title text-center">THE FASTEST BARISTA UNDER THE CITY</h2>
+        <p class="section-subtitle text-center">
+          Experience the high-octane frenzy of a rush-hour subway coffee kiosk. Can your reflexes handle the morning stampede?
+        </p>
+
+        <div class="about-cards-grid">
+          <div class="about-card">
+            <div class="about-card-icon" style="background: #f59e0b22; border-color: #f59e0b;">☕</div>
+            <h3 class="about-card-title">Authentic Cafe Craft</h3>
+            <p class="about-card-text">
+              Calibrate your burr grinder, pull rich crema-topped espresso shots, froth silky microfoam, and layer artisanal flavor syrups.
+            </p>
+          </div>
+
+          <div class="about-card">
+            <div class="about-card-icon" style="background: #38bdf822; border-color: #38bdf8;">🚇</div>
+            <h3 class="about-card-title">Subway Rush Hour</h3>
+            <p class="about-card-text">
+              Commuters don't wait! Race against scheduled train arrival bells. When rush hour hits, orders stack up and speed multipliers ignite.
+            </p>
+          </div>
+
+          <div class="about-card">
+            <div class="about-card-icon" style="background: #10b98122; border-color: #10b981;">💰</div>
+            <h3 class="about-card-title">Coins, Tips & Perks</h3>
+            <p class="about-card-text">
+              Fast orders earn juicy gratuities and subway tokens. Upgrade to high-speed boilers, bean chillers, and stylish barista gear.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KEY FEATURES GRID -->
+    <section class="section features-section" id="features">
+      <div class="container">
+        <div class="section-badge-center">
+          <span class="badge-pill badge-emerald">ARCADE HIGHLIGHTS</span>
+        </div>
+        <h2 class="section-title text-center">PACKED WITH GAMEPLAY FLAVOR</h2>
+        <p class="section-subtitle text-center">
+          Every cup counts when a thousand commuters are sprinting to catch the downtown express.
+        </p>
+
+        <div class="features-grid">
+          <!-- Feature 1 -->
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon bg-amber">⚡</div>
+              <span class="feature-tag">CORE LOOP</span>
+            </div>
+            <h3 class="feature-title">Rush Hour Overdrive</h3>
+            <p class="feature-desc">
+              Survive pulse-pounding rush waves triggered by incoming trains. Keep the queue moving to sustain maximum tip multipliers and high-score combos!
+            </p>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon bg-sky">🎛️</div>
+              <span class="feature-tag">WORKFLOW</span>
+            </div>
+            <h3 class="feature-title">5-Station Workstation</h3>
+            <p class="feature-desc">
+              Tactile, responsive stations: Bean Grinder, Dual-Group Espresso Machine, High-Pressure Milk Steamer, Flavor Syrup Pumps, and Cup Dispensers.
+            </p>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon bg-purple">👥</div>
+              <span class="feature-tag">CHARACTERS</span>
+            </div>
+            <h3 class="feature-title">Vibrant Commuter Cast</h3>
+            <p class="feature-desc">
+              Impatient corporate bankers, sleep-deprived night-shift workers, student influencers, and friendly depot conductors—each with unique patience meters!
+            </p>
+          </div>
+
+          <!-- Feature 4 -->
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon bg-rose">⚙️</div>
+              <span class="feature-tag">PROGRESSION</span>
+            </div>
+            <h3 class="feature-title">Upgrades & Equipment Shop</h3>
+            <p class="feature-desc">
+              Invest your shift earnings into titanium grinder burrs, rapid-recovery steam wands, extra flavor racks, and counter call bells.
+            </p>
+          </div>
+
+          <!-- Feature 5 -->
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon bg-yellow">📊</div>
+              <span class="feature-tag">PERFORMANCE</span>
+            </div>
+            <h3 class="feature-title">Detailed Shift Reviews</h3>
+            <p class="feature-desc">
+              Receive your S/A/B performance grade at the end of each shift. Review orders fulfilled, spill penalties, tip revenue, and golden bean rewards.
+            </p>
+          </div>
+
+          <!-- Feature 6 -->
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-icon bg-emerald">🎵</div>
+              <span class="feature-tag">AUDIO</span>
+            </div>
+            <h3 class="feature-title">Subway Lo-Fi BGM & SFX</h3>
+            <p class="feature-desc">
+              Immerse yourself in rich procedural audio: buzzing bean grinders, steaming wand hisses, espresso dripping, and rhythmic subway track rumbles.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE WORKSTATION PREVIEW -->
+    <section class="section stations-section" id="stations">
+      <div class="container">
+        <div class="section-badge-center">
+          <span class="badge-pill badge-sky">TACTILE SIMULATION</span>
+        </div>
+        <h2 class="section-title text-center">THE 5-STATION COUNTERTOP</h2>
+        <p class="section-subtitle text-center">
+          Master every component of the kiosk to brew flawless drinks in record time.
+        </p>
+
+        <!-- Interactive Station Selector -->
+        <div class="station-tabs" id="stationTabs" role="tablist">
+          <button class="station-tab active" data-station="grind" role="tab" aria-selected="true">
+            <span class="tab-emoji">⚙️</span>
+            <span>1. Grind</span>
+          </button>
+          <button class="station-tab" data-station="brew" role="tab" aria-selected="false">
+            <span class="tab-emoji">☕</span>
+            <span>2. Brew</span>
+          </button>
+          <button class="station-tab" data-station="steam" role="tab" aria-selected="false">
+            <span class="tab-emoji">🥛</span>
+            <span>3. Steam</span>
+          </button>
+          <button class="station-tab" data-station="syrup" role="tab" aria-selected="false">
+            <span class="tab-emoji">🍯</span>
+            <span>4. Syrup</span>
+          </button>
+          <button class="station-tab" data-station="cup" role="tab" aria-selected="false">
+            <span class="tab-emoji">🧊</span>
+            <span>5. Cup & Ice</span>
+          </button>
+        </div>
+
+        <!-- Station Details Card -->
+        <div class="station-display-box" id="stationDisplay">
+          <div class="station-detail-card" id="stationContent">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+
+        <!-- Gameplay Screenshot Showcase Showcase -->
+        <div class="gameplay-showcase-wrapper" style="margin-top: 48px;">
+          <div class="arcade-screen-frame">
+            <div class="screen-bezel-top">
+              <span class="screen-label">ACTION SCREENSHOT: RUSH HOUR ON TRACK 2</span>
+              <span class="screen-rec">READY TO PLAY</span>
+            </div>
+            <div class="screen-media-wrapper">
+              <img src="./assets/gameplay-showcase.jpg" alt="Espresso Express gameplay showing 5-station counter, commuter orders, coins, and combo HUD" class="gameplay-artwork-img" loading="lazy">
+            </div>
+            <div class="screen-bezel-bottom">
+              <div class="ticker-text">
+                ★ 100% INDIE-CRAFTED GAMEPLAY • FULL ANDROID PERFORMANCE • TOUCH & DRAG BARISTA MECHANICS ★
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMMUTER CAST SECTION -->
+    <section class="section commuters-section" id="commuters">
+      <div class="container">
+        <div class="section-badge-center">
+          <span class="badge-pill badge-purple">SUBWAY CHARACTERS</span>
+        </div>
+        <h2 class="section-title text-center">MEET YOUR MORNING COMMUTERS</h2>
+        <p class="section-subtitle text-center">
+          Every customer brings their own personality, drink preference, and patience threshold!
+        </p>
+
+        <div class="commuters-grid">
+          <!-- Commuter 1 -->
+          <div class="commuter-card">
+            <div class="commuter-avatar-box">
+              <div class="commuter-avatar">💼</div>
+              <div class="commuter-mood-badge">⚡ ANXIOUS</div>
+            </div>
+            <h3 class="commuter-name">The Wall Street Exec</h3>
+            <div class="commuter-order-tag">"Double Espresso, ASAP!"</div>
+            <p class="commuter-bio">
+              Constantly checking their wristwatch. Patience drops fast, but tip bonuses are massive if you serve them before the 8:15 express train pulls in!
+            </p>
+            <div class="commuter-stats">
+              <span class="stat-pill">Patience: ★☆☆☆☆</span>
+              <span class="stat-pill">Tip Bonus: ★★★★★</span>
+            </div>
+          </div>
+
+          <!-- Commuter 2 -->
+          <div class="commuter-card">
+            <div class="commuter-avatar-box">
+              <div class="commuter-avatar">🥱</div>
+              <div class="commuter-mood-badge">😴 DROWSY</div>
+            </div>
+            <h3 class="commuter-name">The Night-Shift Nurse</h3>
+            <div class="commuter-order-tag">"Large Caramel Latte, extra hot..."</div>
+            <p class="commuter-bio">
+              Just clocked out after a 12-hour shift. Kind and patient, but desperately craving a sweet, warm pick-me-up to survive the subway commute home.
+            </p>
+            <div class="commuter-stats">
+              <span class="stat-pill">Patience: ★★★★☆</span>
+              <span class="stat-pill">Tip Bonus: ★★★☆☆</span>
+            </div>
+          </div>
+
+          <!-- Commuter 3 -->
+          <div class="commuter-card">
+            <div class="commuter-avatar-box">
+              <div class="commuter-avatar">📱</div>
+              <div class="commuter-mood-badge">✨ CHIC</div>
+            </div>
+            <h3 class="commuter-name">The Campus Influencer</h3>
+            <div class="commuter-order-tag">"Iced Oat Mocha, photogenic foam!"</div>
+            <p class="commuter-bio">
+              Needs their cup to look aesthetically immaculate for their morning vlog. Double pumps of mocha, oat milk microfoam, and chilled ice cubes only.
+            </p>
+            <div class="commuter-stats">
+              <span class="stat-pill">Patience: ★★★☆☆</span>
+              <span class="stat-pill">Tip Bonus: ★★★★☆</span>
+            </div>
+          </div>
+
+          <!-- Commuter 4 -->
+          <div class="commuter-card">
+            <div class="commuter-avatar-box">
+              <div class="commuter-avatar">🚂</div>
+              <div class="commuter-mood-badge">🎯 PRECISE</div>
+            </div>
+            <h3 class="commuter-name">The Line Conductor</h3>
+            <div class="commuter-order-tag">"Straight black Americano."</div>
+            <p class="commuter-bio">
+              The guardian of Platform 9. No nonsense, no syrups—just boiling hot caffeinated fuel so they can steer the silver train safely down the rails.
+            </p>
+            <div class="commuter-stats">
+              <span class="stat-pill">Patience: ★★☆☆☆</span>
+              <span class="stat-pill">Tip Bonus: ★★★☆☆</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DOWNLOAD APK & SPECS SECTION -->
+    <section class="section download-section" id="download">
+      <div class="container">
+        <div class="download-banner-card">
+          <!-- Glowing Station Sign Header -->
+          <div class="download-header-badge">
+            <span class="sign-bullet">●</span>
+            <span>GET ESPRESSO EXPRESS FOR ANDROID</span>
+            <span class="sign-bullet">●</span>
+          </div>
+
+          <h2 class="download-main-heading">
+            READY TO RUN PLATFORM 9?
+          </h2>
+
+          <p class="download-subtext">
+            Download the standalone Android APK package directly to your smartphone or tablet. No app store accounts, no intrusive permissions, 100% free indie fun.
+          </p>
+
+          <!-- The Big Download Button -->
+          <div class="download-action-wrap">
+            <a href="/downloads/EspressoExpress.apk" download="EspressoExpress.apk" class="btn-arcade btn-arcade-xl btn-amber" id="mainDownloadApkBtn">
+              <span class="download-glow-icon">⬇</span>
+              <div class="download-btn-text">
+                <span class="main-label">DOWNLOAD APK NOW</span>
+                <span class="sub-label">Version 1.0.0 • Direct Package (18.4 MB)</span>
+              </div>
+            </a>
+          </div>
+
+          <!-- Specifications Table / Card -->
+          <div class="specs-grid">
+            <div class="spec-card">
+              <span class="spec-title">PACKAGE NAME</span>
+              <span class="spec-value">com.espressoexpress.game</span>
+            </div>
+            <div class="spec-card">
+              <span class="spec-title">LATEST VERSION</span>
+              <span class="spec-value font-highlight">1.0.0 Release</span>
+            </div>
+            <div class="spec-card">
+              <span class="spec-title">REQUIREMENTS</span>
+              <span class="spec-value">Android 8.0 (Oreo) or Higher</span>
+            </div>
+            <div class="spec-card">
+              <span class="spec-title">DOWNLOAD SIZE</span>
+              <span class="spec-value">18.4 MB</span>
+            </div>
+            <div class="spec-card">
+              <span class="spec-title">INTERNET NEEDED</span>
+              <span class="spec-value">None (100% Offline Playable)</span>
+            </div>
+            <div class="spec-card">
+              <span class="spec-title">PRICE / MONETIZATION</span>
+              <span class="spec-value font-highlight">Free • No Ads • No In-App Purchases</span>
+            </div>
+          </div>
+
+          <!-- Installation Help Accordion / Callout -->
+          <div class="install-guide-box">
+            <div class="install-guide-title">
+              <span>💡 HOW TO INSTALL THE APK ON ANDROID:</span>
+            </div>
+            <ol class="install-steps">
+              <li>Tap the <strong>Download APK</strong> button above to download <code>EspressoExpress.apk</code> to your device.</li>
+              <li>Open your phone's <strong>Downloads</strong> folder and tap the downloaded APK file.</li>
+              <li>If prompted, toggle <em>"Allow installation from unknown sources"</em> for your browser or file manager.</li>
+              <li>Tap <strong>Install</strong>, launch the app from your home screen, and start your first shift on Platform 9!</li>
+            </ol>
+            <div class="releases-note">
+              <span>🚀 <strong>Note:</strong> We will also connect this link to official GitHub Releases APK builds for automatic updates.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <span class="cup-emoji">☕</span>
+          <span class="footer-title">ESPRESSO EXPRESS</span>
+        </div>
+        <p class="footer-desc">
+          An indie 2D mobile arcade coffee shop simulator on the Grand Central subway platform. Brew fast, steam silky, deliver perfection!
+        </p>
+      </div>
+
+      <div class="footer-links">
+        <span class="footer-heading">PROJECT & LINKS</span>
+        <a href="https://github.com/karmapatel/Espresso-Express" target="_blank" rel="noopener noreferrer" class="footer-link">
+          <span>📦 GitHub Repository</span>
+        </a>
+        <a href="https://github.com/karmapatel/Espresso-Express/issues" target="_blank" rel="noopener noreferrer" class="footer-link">
+          <span>🐛 Report Bug / Issue</span>
+        </a>
+        <a href="https://github.com/karmapatel/Espresso-Express/blob/main/README.md" target="_blank" rel="noopener noreferrer" class="footer-link">
+          <span>📖 Game Readme & Docs</span>
+        </a>
+        <a href="/downloads/EspressoExpress.apk" download class="footer-link">
+          <span>⬇ Download APK (v1.0.0)</span>
+        </a>
+      </div>
+
+      <div class="footer-legal">
+        <div class="subway-tile-badge">
+          <span>MTA PLATFORM 9 KIOSK</span>
+        </div>
+        <p class="copyright-text">
+          Released under the <strong>MIT License</strong>.
+        </p>
+        <p class="version-tag">
+          Espresso Express • Version 1.0.0
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Container for interactive feedback -->
+  <div class="toast-overlay" id="toastOverlay" aria-live="polite"></div>
+
+  <!-- Interactive script -->
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

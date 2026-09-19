@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#1a162b">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Espresso Express - 2D Mobile Arcade Game</title>
+  <meta name="description" content="2D Mobile Arcade Game">
+  <meta property="og:title" content="Espresso Express">
+  <meta property="og:description" content="2D Mobile Arcade Game">
+  
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700;800&family=Bungee&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="./src/styles/tokens.css">
+  <link rel="stylesheet" href="./src/styles/animations.css">
+  <link rel="stylesheet" href="./src/styles/mobile-frame.css">
+  <link rel="stylesheet" href="./src/styles/components.css">
+  <link rel="stylesheet" href="./src/styles/game-world.css">
+</head>
+<body>
+  <!-- App Root Container (Supports Mobile Frame Emulation or Full View) -->
+  <div id="device-container" class="device-phone">
+    <!-- Simulated Android Notch / Status Bar -->
+    <header class="android-status-bar" id="statusBar" aria-label="Device Status">
+      <span class="status-time" id="statusClock">9:41</span>
+      <div class="status-camera-notch"></div>
+      <div class="status-icons">
+        <span class="status-signal">●●●●</span>
+        <span class="status-network">5G</span>
+        <span class="status-battery">
+          <span class="battery-level"></span>
+        </span>
+      </div>
+    </header>
+
+    <!-- Main Game App Viewport -->
+    <main id="app-viewport" class="game-viewport">
+      <!-- Screen container injected via router -->
+      <div id="screens-root" class="screens-root"></div>
+
+      <!-- Global Floating Modal Container -->
+      <div id="modal-container" class="modal-overlay hidden" aria-modal="true" role="dialog"></div>
+
+      <!-- Global Game Toast System -->
+      <div id="toast-container" class="toast-container" aria-live="polite"></div>
+    </main>
+
+    <!-- Android Gesture Navigation Pill / Home Indicator -->
+    <div class="android-nav-bar">
+      <div class="android-home-pill"></div>
+    </div>
+  </div>
+
+
+  <!-- Application Entry Script -->
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
