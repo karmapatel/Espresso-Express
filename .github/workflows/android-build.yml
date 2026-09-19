@@ -1,0 +1,114 @@
+name: Android CI Build Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: # Allows manual trigger from GitHub UI Actions tab
+
+jobs:
+  build:
+    name: Build Genuine Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetches all tags and history to accurately compute version tags
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Bootstrap Gradle Wrapper
+        run: |
+          gradle wrapper --gradle-version 8.3
+        working-directory: android
+
+      - name: Grant Execute Permission for Gradlew
+        run: chmod +x gradlew
+        working-directory: android
+
+      - name: Build Debug APK with Gradle
+        run: ./gradlew assembleDebug --no-daemon
+        working-directory: android
+
+      - name: Find and Verify APK Output
+        run: |
+          echo "Locating built APK outputs..."
+          find . -name "*.apk"
+        working-directory: android
+
+      - name: Rename APK for Release
+        run: |
+          mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/espresso-express.apk
+        working-directory: android
+
+      - name: Upload APK Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: EspressoExpress-APK
+          path: android/app/build/outputs/apk/debug/espresso-express.apk
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Determine Next Semantic Version Tag
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git fetch --tags --force || true
+          # Find the latest tag matching standard vX.Y.Z
+          LATEST_TAG=$(git tag -l "v*" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n1 || echo "")
+          echo "Latest tag found: $LATEST_TAG"
+          if [ -z "$LATEST_TAG" ]; then
+            NEW_TAG="v1.0.0"
+          else
+            VERSION=${LATEST_TAG#v}
+            IFS='.' read -r major minor patch <<< "$VERSION"
+            NEW_PATCH=$((patch + 1))
+            NEW_TAG="v${major}.${minor}.${NEW_PATCH}"
+          fi
+          echo "Computed next version: $NEW_TAG"
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+
+      # Step to automatically create and publish the semantic release on push to main
+      - name: Create Semantic GitHub Release
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.NEW_TAG }}
+          name: "Espresso Express ${{ env.NEW_TAG }}"
+          body: |
+            Automated production release `${{ env.NEW_TAG }}` from push to `main`.
+            
+            **Commit Info**:
+            * Message: `${{ github.event.head_commit.message }}`
+            * SHA: `${{ github.sha }}`
+          draft: false
+          prerelease: false
+          files: android/app/build/outputs/apk/debug/espresso-express.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step for explicit version tag releases (e.g. v1.0.0)
+      - name: Attach APK to Tagged GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: android/app/build/outputs/apk/debug/espresso-express.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

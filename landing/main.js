@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileMenu();
   initDownloadButtons();
   initScrollHeader();
+  fetchLatestRelease();
 });
 
 /* ------------------------------------------------------------------------- */
@@ -186,4 +187,89 @@ function initScrollHeader() {
       header.style.boxShadow = 'none';
     }
   }, { passive: true });
+}
+
+/* ------------------------------------------------------------------------- */
+/* 5. GITHUB RELEASE SYNCHRONIZER                                            */
+/* ------------------------------------------------------------------------- */
+async function fetchLatestRelease() {
+  // Try to find the GitHub repository path dynamically from the page
+  const githubLinkEl = document.querySelector('a[href*="github.com"]');
+  let repoPath = "karmapatel/Espresso-Express"; // default fallback
+  if (githubLinkEl) {
+    try {
+      const href = githubLinkEl.getAttribute('href');
+      const url = new URL(href);
+      const paths = url.pathname.split('/').filter(Boolean);
+      if (paths.length >= 2) {
+        repoPath = `${paths[0]}/${paths[1]}`;
+      }
+    } catch (e) {
+      console.warn("Failed to parse repo path from link, using default.", e);
+    }
+  }
+
+  const defaultApkUrl = `https://github.com/${repoPath}/releases/latest/download/app-debug.apk`;
+  let downloadUrl = defaultApkUrl;
+  let version = "1.0.0";
+
+  try {
+    const res = await fetch(`https://api.github.com/repos/${repoPath}/releases/latest`);
+    if (res.ok) {
+      const data = await res.json();
+      let rawVersion = data.tag_name ? data.tag_name.replace(/^v/, '') : "1.0.0";
+      
+      if (rawVersion === "latest") {
+        // Fallback to a clean semantic version format if the tag is 'latest'
+        version = "1.0.0";
+      } else {
+        version = rawVersion;
+      }
+      
+      // Look for any asset ending with .apk
+      const apkAsset = data.assets?.find(asset => asset.name.endsWith('.apk'));
+      if (apkAsset) {
+        downloadUrl = apkAsset.browser_download_url;
+      } else {
+        // Fallback construct if no asset attached yet
+        downloadUrl = `https://github.com/${repoPath}/releases/download/${data.tag_name || 'latest'}/app-debug.apk`;
+      }
+    }
+  } catch (error) {
+    console.error("Failed to fetch latest GitHub release, using direct build fallback.", error);
+  }
+
+  // Update all download buttons and anchor links
+  const downloadLinks = document.querySelectorAll('a[href*="downloads/EspressoExpress.apk"], a[href*="EspressoExpress.apk"]');
+  downloadLinks.forEach(link => {
+    link.href = downloadUrl;
+    // Remove direct browser download attribute since it's an external redirect
+    link.removeAttribute('download');
+    
+    // Update label versions on anchors if needed
+    if (link.textContent.includes('v1.0.0')) {
+      link.innerHTML = link.innerHTML.replace('v1.0.0', `v${version}`);
+    }
+  });
+
+  // Update text representations of version
+  const versionPill = document.querySelector('.version-pill');
+  if (versionPill) versionPill.textContent = `v${version} APK`;
+
+  const ctaSub = document.querySelector('.cta-subtitle');
+  if (ctaSub) ctaSub.textContent = `Android 8.0+ • Version ${version} (Direct Package)`;
+
+  const mainSub = document.querySelector('.download-action-wrap .sub-label');
+  if (mainSub) mainSub.textContent = `Android 8.0+ • Version ${version} (Direct APK Package)`;
+
+  const specVersion = document.querySelector('.specs-grid .spec-card:nth-child(2) .spec-value');
+  if (specVersion) specVersion.textContent = `${version} Release`;
+
+  const footerVersion = document.querySelector('.version-tag');
+  if (footerVersion) footerVersion.textContent = `Espresso Express APK • Version ${version}`;
+
+  const mobileNavLink = document.querySelector('a[href="#download"].mobile-nav-link');
+  if (mobileNavLink) mobileNavLink.textContent = `Download APK (v${version})`;
+
+  console.log(`[APK Downloader] Successfully configured links to: ${downloadUrl} (Version ${version})`);
 }
