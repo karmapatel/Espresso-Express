@@ -233,7 +233,6 @@ fun SettingsScreen(
                                         var foundApkUrl: String? = null
                                         var lastEx: Exception? = null
                                         var resolvedOwner = "karmapatel"
-                                        var resolvedOwner = "karmapatel"
 
                                         withContext(Dispatchers.IO) {
                                             for (urlStr in urls) {
