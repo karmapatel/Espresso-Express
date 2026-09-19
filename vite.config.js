@@ -47,7 +47,8 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2,jpg,jpeg}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2,jpg,jpeg}'],
+        navigateFallbackDenylist: [/^\/downloads/, /\.apk$/]
       },
       devOptions: {
         enabled: true,

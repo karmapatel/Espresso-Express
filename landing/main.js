@@ -209,7 +209,7 @@ async function fetchLatestRelease() {
     }
   }
 
-  const defaultApkUrl = `https://github.com/${repoPath}/releases/latest/download/app-debug.apk`;
+  const defaultApkUrl = `https://github.com/${repoPath}/releases/latest/download/espresso-express.apk`;
   let downloadUrl = defaultApkUrl;
   let version = "1.0.0";
 
@@ -232,7 +232,7 @@ async function fetchLatestRelease() {
         downloadUrl = apkAsset.browser_download_url;
       } else {
         // Fallback construct if no asset attached yet
-        downloadUrl = `https://github.com/${repoPath}/releases/download/${data.tag_name || 'latest'}/app-debug.apk`;
+        downloadUrl = `https://github.com/${repoPath}/releases/download/${data.tag_name || 'latest'}/espresso-express.apk`;
       }
     }
   } catch (error) {
@@ -243,8 +243,10 @@ async function fetchLatestRelease() {
   const downloadLinks = document.querySelectorAll('a[href*="downloads/EspressoExpress.apk"], a[href*="EspressoExpress.apk"]');
   downloadLinks.forEach(link => {
     link.href = downloadUrl;
-    // Remove direct browser download attribute since it's an external redirect
-    link.removeAttribute('download');
+    // Keep/ensure download attribute is present to bypass PWA Service Worker navigation interceptor
+    link.setAttribute('download', 'espresso-express.apk');
+    // Set external relationship to instruct browsers/PWA to handle natively
+    link.setAttribute('rel', 'external');
     
     // Update label versions on anchors if needed
     if (link.textContent.includes('v1.0.0')) {
