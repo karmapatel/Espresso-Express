@@ -232,6 +232,8 @@ fun SettingsScreen(
                                         var foundVersion: String? = null
                                         var foundApkUrl: String? = null
                                         var lastEx: Exception? = null
+                                        var resolvedOwner = "karmapatel"
+                                        var resolvedOwner = "karmapatel"
 
                                         withContext(Dispatchers.IO) {
                                             for (urlStr in urls) {
@@ -246,6 +248,7 @@ fun SettingsScreen(
 
                                                     val responseCode = connection.responseCode
                                                     if (responseCode == java.net.HttpURLConnection.HTTP_OK) {
+                                                        resolvedOwner = if (urlStr.contains("karmapatel4")) "karmapatel4" else "karmapatel"
                                                         val content = connection.inputStream.bufferedReader().use { it.readText() }.trim()
                                                         if (urlStr.contains("releases/latest")) {
                                                             val json = JSONObject(content)
@@ -293,7 +296,7 @@ fun SettingsScreen(
                                         latestVersionName = foundVersion!!
                                         val urlVal = foundApkUrl
                                         latestApkUrl = if (urlVal.isNullOrEmpty() || urlVal.contains("ais-pre-") || urlVal.contains("asia-southeast1.run.app")) {
-                                             "https://github.com/karmapatel/Espresso-Express/releases/tag/v$latestVersionName"
+                                             "https://github.com/$resolvedOwner/Espresso-Express/releases/download/v$latestVersionName/espresso-express.apk"
                                          } else {
                                              urlVal
                                          }
@@ -410,6 +413,7 @@ fun SettingsScreen(
                                             var foundVersion: String? = null
                                             var foundApkUrl: String? = null
                                             var lastEx: Exception? = null
+                                            var resolvedOwner = "karmapatel"
 
                                             withContext(Dispatchers.IO) {
                                                 for (urlStr in urls) {
@@ -471,7 +475,7 @@ fun SettingsScreen(
                                             latestVersionName = foundVersion!!
                                             val urlVal = foundApkUrl
                                             latestApkUrl = if (urlVal.isNullOrEmpty() || urlVal.contains("ais-pre-") || urlVal.contains("asia-southeast1.run.app")) {
-                                             "https://github.com/karmapatel/Espresso-Express/releases/tag/v$latestVersionName"
+                                             "https://github.com/$resolvedOwner/Espresso-Express/releases/download/v$latestVersionName/espresso-express.apk"
                                          } else {
                                              urlVal
                                          }

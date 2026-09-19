@@ -243,7 +243,7 @@ function isVersionNewer(newVer, currentVer) {
 
 async function fetchLatestRelease() {
   let downloadUrl = "/downloads/EspressoExpress.apk";
-  let version = "1.1.3";
+  let version = "1.1.4";
 
   // Try to find the local version.json first to be accurate to local deployments
   try {
