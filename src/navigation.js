@@ -25,7 +25,6 @@ class NavigationController {
 
     this.root = document.getElementById('screens-root');
     this.modalContainer = document.getElementById('modal-container');
-    this.devNavButtons = document.querySelectorAll('.dev-btn[data-nav]');
 
     this.unsubscribeState = null;
     this.unsubscribeLoop = null;
@@ -92,19 +91,7 @@ class NavigationController {
     }
 
     this.render();
-    this.updateDevNavHighlights();
     this.closeModal();
-  }
-
-  updateDevNavHighlights() {
-    this.devNavButtons.forEach(btn => {
-      const target = btn.getAttribute('data-nav');
-      if (target === this.currentScreen) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
-    });
   }
 
   toggleRushState() {
@@ -752,40 +739,6 @@ class NavigationController {
         this.closeModal();
       }
     });
-
-    // Reviewer Navigation Ribbon handlers
-    this.devNavButtons.forEach(btn => {
-      btn.onclick = () => {
-        const target = btn.getAttribute('data-nav');
-        this.navigateTo(target);
-      };
-    });
-
-    const rushToggleBtn = document.querySelector('[data-toggle="rush-state"]');
-    if (rushToggleBtn) {
-      rushToggleBtn.onclick = () => this.toggleRushState();
-    }
-
-    const frameToggleBtn = document.getElementById('toggleFrameViewBtn');
-    const deviceContainer = document.getElementById('device-container');
-    if (frameToggleBtn && deviceContainer) {
-      frameToggleBtn.onclick = () => {
-        deviceContainer.classList.toggle('device-fullscreen');
-        deviceContainer.classList.toggle('device-phone');
-        showToast(
-          deviceContainer.classList.contains('device-fullscreen') ? "FULL VIEW ACTIVE" : "PHONE FRAME ACTIVE", 
-          "📱"
-        );
-      };
-    }
-
-    const devToggle = document.getElementById('toggleDevNav');
-    const devPanel = document.getElementById('devNavPanel');
-    if (devToggle && devPanel) {
-      devToggle.onclick = () => {
-        devPanel.classList.toggle('collapsed');
-      };
-    }
   }
 }
 

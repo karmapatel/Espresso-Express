@@ -174,55 +174,7 @@ html, body {
   border-radius: 999px;
 }
 
-/* ========================================================================= */
-/* REVIEWER NAVIGATION PANEL (FOR STAGE 1 TESTING)                           */
-/* ========================================================================= */
-.dev-nav-panel {
-  position: fixed;
-  bottom: 12px;
-  right: 12px;
-  background: #171329ee;
-  border: 2px solid var(--amber-primary);
-  border-radius: 14px;
-  padding: 8px 12px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-  backdrop-filter: blur(10px);
-  z-index: 9999;
-  max-width: 320px;
-  font-size: 11px;
-  transition: all 0.25s ease;
-}
-
-.dev-nav-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.dev-nav-title {
-  font-family: var(--font-arcade);
-  color: var(--amber-light);
-  font-size: 10px;
-  letter-spacing: 0.5px;
-}
-
-.dev-nav-toggle {
-  background: #2a2347;
-  border: 1px solid #4a3d75;
-  color: #fff;
-  border-radius: 4px;
-  font-size: 9px;
-  padding: 1px 6px;
-  cursor: pointer;
-}
-
-.dev-nav-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
+/* Category and filter tabs */
 .dev-btn {
   background: #251e3d;
   color: #e2e8f0;
@@ -247,13 +199,6 @@ html, body {
   border-color: #8b5cf6;
 }
 
-.dev-nav-panel.collapsed .dev-nav-buttons {
-  display: none;
-}
-.dev-nav-panel.collapsed .dev-nav-toggle {
-  transform: rotate(180deg);
-}
-
 @media (max-width: 600px) {
   #device-container.device-phone {
     max-width: 100%;
@@ -262,11 +207,5 @@ html, body {
     border-radius: 0;
     box-shadow: none;
     border: none;
-  }
-  .dev-nav-panel {
-    bottom: 24px;
-    right: 8px;
-    left: 8px;
-    max-width: none;
   }
 }
