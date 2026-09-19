@@ -43,7 +43,7 @@ jobs:
 
       - name: Bootstrap Gradle Wrapper
         run: |
-          gradle wrapper --gradle-version 8.3
+          gradle wrapper --gradle-version 8.4
         working-directory: android
 
       - name: Grant Execute Permission for Gradlew
