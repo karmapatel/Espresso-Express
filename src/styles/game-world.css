@@ -1,0 +1,1008 @@
+/* ========================================================================= */
+/* ESPRESSO EXPRESS GAME WORLD SCENE STYLES                                  */
+/* ========================================================================= */
+
+.game-scene-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #120e22;
+}
+
+/* ========================================================================= */
+/* LAYER 0: IN-GAME MINIMAL HUD                                              */
+/* ========================================================================= */
+.game-hud-bar {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  right: 6px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: auto;
+}
+
+.hud-train-alert {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(27, 21, 46, 0.92);
+  border: 2px solid rgba(251, 191, 36, 0.85);
+  border-radius: var(--border-radius-full);
+  padding: 3px 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.hud-train-timer {
+  font-family: var(--font-numeric);
+  font-weight: 900;
+  font-size: 12px;
+  background: #450a0a;
+  color: #fee2e2;
+  border: 1px solid #ef4444;
+  padding: 1px 5px;
+  border-radius: 4px;
+  letter-spacing: -0.5px;
+}
+
+.hud-right-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-chaos-box {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(27, 21, 46, 0.92);
+  border: 2px solid #ea580c;
+  border-radius: var(--border-radius-full);
+  padding: 3px 6px;
+}
+
+.hud-chaos-track {
+  width: 48px;
+  height: 8px;
+  background: #090710;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #7c2d12;
+}
+
+.hud-chaos-fill {
+  width: 78%;
+  height: 100%;
+  background: linear-gradient(90deg, #facc15, #f97316, #ef4444);
+  border-radius: 4px;
+  animation: gentlePulse 1.5s infinite ease-in-out;
+}
+
+.hud-pause-btn {
+  width: 28px;
+  height: 28px;
+  background: #281f45;
+  border: 2px solid #55448c;
+  border-radius: 8px;
+  color: #cbd5e1;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #120e21;
+}
+
+/* ========================================================================= */
+/* LAYER 1: SUBWAY TILES, ARCHES & ROLLING COMMUTER TRAIN                    */
+/* ========================================================================= */
+.subway-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #242038;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 24px 14px;
+}
+
+/* Subway Upper Arches */
+.subway-upper-vault {
+  position: relative;
+  width: 100%;
+  height: 110px;
+  background: #161224;
+  border-bottom: 3px solid #0d0a17;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.subway-pipe-horiz {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: linear-gradient(180deg, #9a3412 0%, #431407 100%);
+  border-bottom: 1px solid #1a0803;
+}
+
+.subway-conduit {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #475569;
+  border-bottom: 1px solid #1e293b;
+}
+
+/* Industrial Pendant Lights with Glowing Light Cones */
+.subway-lamp {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.subway-lamp-cord {
+  width: 2px;
+  height: 24px;
+  background: #64748b;
+}
+
+.subway-lamp-hood {
+  width: 28px;
+  height: 10px;
+  background: #334155;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  border: 2px solid #1e293b;
+}
+
+.subway-lamp-bulb {
+  width: 20px;
+  height: 6px;
+  background: #fcd34d;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 0 15px #f59e0b;
+}
+
+.subway-light-cone {
+  width: 100px;
+  height: 180px;
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.18) 0%, rgba(245, 158, 11, 0.04) 55%, transparent 100%);
+  clip-path: polygon(38% 0%, 62% 0%, 100% 100%, 0% 100%);
+  pointer-events: none;
+}
+
+/* Station Sign */
+.station-direction-sign {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0b111e;
+  border: 2px solid #3b82f6;
+  border-radius: 6px;
+  padding: 3px 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+}
+
+.station-line-badge {
+  width: 18px;
+  height: 18px;
+  background: #2563eb;
+  border: 1.5px solid #ffffff;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 900;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.station-text-title {
+  font-size: 8px;
+  font-weight: 900;
+  color: #93c5fd;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.1;
+}
+.station-text-sub {
+  font-size: 6.5px;
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+/* Wall Billboard */
+.subway-billboard {
+  position: absolute;
+  top: 14px;
+  right: 8px;
+  background: #1f1138;
+  border: 2px solid #ec4899;
+  border-radius: 6px;
+  padding: 4px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  transform: rotate(1deg);
+}
+
+/* Train Platform & Arrived Subway Train */
+.subway-track-area {
+  position: relative;
+  width: 100%;
+  height: 130px;
+  background: #110f1c;
+  border-bottom: 3px solid #06050b;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+/* Steel Rails */
+.subway-rails {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: #08060f;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.subway-rail-line {
+  height: 1.5px;
+  background: #64748b;
+}
+
+/* Train Body */
+.subway-train-car {
+  position: relative;
+  width: 108%;
+  left: -4%;
+  height: 105px;
+  background: linear-gradient(180deg, #475569 0%, #334155 45%, #1e293b 100%);
+  border-top: 3px solid #0f172a;
+  border-bottom: 3px solid #0f172a;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 -4px 15px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.train-yellow-stripe {
+  height: 14px;
+  background: #facc15;
+  border-top: 1.5px solid #ca8a04;
+  border-bottom: 1.5px solid #ca8a04;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  margin-top: 4px;
+}
+
+.train-stripe-text {
+  font-size: 7px;
+  font-weight: 900;
+  color: #1e293b;
+  letter-spacing: 0.8px;
+}
+
+/* Windows and Doors */
+.train-window-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  padding: 6px 12px;
+  gap: 8px;
+  flex: 1;
+}
+
+.train-window {
+  flex: 1;
+  height: 48px;
+  background: rgba(14, 116, 144, 0.7);
+  border: 2px solid #1e293b;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.train-window-glare {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.25) 0%, transparent 60%);
+}
+
+.commuter-silhouette {
+  width: 20px;
+  height: 32px;
+  background: #020617;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  position: relative;
+}
+
+.commuter-silhouette-head {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  background: #020617;
+  border-radius: 50%;
+}
+
+.train-open-door {
+  width: 58px;
+  height: 68px;
+  background: #090b14;
+  border: 2.5px solid #f59e0b;
+  border-bottom: none;
+  position: relative;
+  overflow: visible;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.door-hazard-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: repeating-linear-gradient(45deg, #facc15, #facc15 4px, #000 4px, #000 8px);
+}
+
+.train-headlight {
+  position: absolute;
+  bottom: -4px;
+  left: 8px;
+  width: 22px;
+  height: 22px;
+  background: #fef08a;
+  border: 3px solid #1e293b;
+  border-radius: 50%;
+  box-shadow: 0 0 25px #fef08a, 0 0 50px rgba(254, 240, 138, 0.5);
+  z-index: 20;
+}
+
+/* Platform Tactile Bumps */
+.platform-edge {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  background: #262626;
+  border-top: 2px solid #171717;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  z-index: 20;
+}
+
+.tactile-bumps-strip {
+  width: 100%;
+  height: 6px;
+  background: #eab308;
+  border: 1px solid #a16207;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.tactile-bump {
+  width: 3px;
+  height: 3px;
+  background: #854d0e;
+  border-radius: 50%;
+}
+
+/* ========================================================================= */
+/* LAYER 2: WAITING COMMUTER CHARACTERS (CUSTOMER QUEUE)                     */
+/* ========================================================================= */
+.customer-queue-row {
+  position: relative;
+  width: 100%;
+  z-index: 25;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  padding: 0 6px;
+  margin-top: 2px;
+  margin-bottom: -6px;
+}
+
+.customer-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.customer-card:active {
+  transform: scale(0.96);
+}
+
+/* Speech Bubble Order Demand */
+.customer-speech-bubble {
+  margin-bottom: 3px;
+  background: #ffffff;
+  border: 2.5px solid #1e1b2e;
+  border-radius: 10px;
+  padding: 3px 6px;
+  box-shadow: 0 3px 0 #181524;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 110px;
+  white-space: nowrap;
+}
+
+.bubble-drink-icon {
+  width: 18px;
+  height: 18px;
+  background: #fef3c7;
+  border: 1.5px solid #78350f;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+}
+
+.bubble-text-col {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.bubble-title {
+  font-size: 7.5px;
+  font-weight: 900;
+  line-height: 1;
+  color: #1e1b2e;
+  text-transform: uppercase;
+}
+
+.bubble-subtitle {
+  font-size: 6px;
+  font-weight: 800;
+  color: #64748b;
+  margin-top: 1px;
+}
+
+.bubble-urgency-badge {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 900;
+}
+
+.urgency-high {
+  background: #fee2e2;
+  border: 1.5px solid #ef4444;
+  color: #b91c1c;
+}
+
+.urgency-normal {
+  background: #e0f2fe;
+  border: 1.5px solid #0284c7;
+  color: #0369a1;
+}
+
+/* ========================================================================= */
+/* LAYER 3: SERVING COUNTER TOP & ORDER TICKET RAILS                         */
+/* ========================================================================= */
+.counter-top-bar {
+  position: relative;
+  width: 100%;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+}
+
+.ticket-rail-bar {
+  width: 100%;
+  height: 24px;
+  background: #334155;
+  border-top: 2px solid #1e1b2e;
+  border-bottom: 2px solid #1e1b2e;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.ticket-rail-slot {
+  width: 100%;
+  height: 4px;
+  background: #0f172a;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 8px;
+}
+
+.order-rail-ticket {
+  background: #fef3c7;
+  border: 1.5px solid #1e1b2e;
+  border-top: none;
+  border-radius: 0 0 5px 5px;
+  padding: 2px 6px;
+  font-size: 7.5px;
+  font-weight: 800;
+  color: #1e1b2e;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+}
+
+.counter-wood-shelf {
+  position: relative;
+  width: 100%;
+  height: 32px;
+  background: linear-gradient(180deg, #d97736 0%, #b45309 60%, #78350f 100%);
+  border-top: 3px solid #fcd34d;
+  border-bottom: 3px solid #451a03;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.serve-zone-mat {
+  height: 24px;
+  padding: 0 8px;
+  background: rgba(6, 78, 59, 0.85);
+  border: 2px solid #34d399;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: transform 0.1s;
+}
+.serve-zone-mat:active {
+  transform: scale(0.96);
+}
+
+.spill-counter-zone {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.coffee-spill-puddle {
+  position: relative;
+  width: 50px;
+  height: 10px;
+  background: #3f1e09;
+  border: 1px solid #1c0d04;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wipe-sponge-prop {
+  width: 22px;
+  height: 18px;
+  background: #7dd3fc;
+  border: 1.5px solid #0369a1;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #075985;
+}
+
+.cash-register-prop {
+  height: 24px;
+  padding: 0 8px;
+  background: linear-gradient(180deg, #fde047 0%, #ca8a04 100%);
+  border: 2px solid #713f12;
+  border-radius: 4px 4px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* ========================================================================= */
+/* LAYER 4: PLAYABLE WORKSTATION (5 INTERACTIVE STATIONS)                     */
+/* ========================================================================= */
+.workstation-container {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  background: linear-gradient(180deg, #241d3d 0%, #1a152d 55%, #120e20 100%);
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-top: 2px solid #0f0c1b;
+  z-index: 40;
+}
+
+.stations-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  height: calc(100% - 46px);
+  width: 100%;
+}
+
+.station-cell {
+  background: #19142b;
+  border: var(--game-border-width) solid var(--game-border-color);
+  border-radius: var(--border-radius);
+  padding: 4px 2px;
+  box-shadow: var(--game-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.station-title {
+  font-family: var(--font-arcade);
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 2px;
+}
+
+/* Station 1: Grinder */
+.grinder-hopper {
+  position: relative;
+  width: 32px;
+  height: 38px;
+  background: rgba(254, 243, 199, 0.15);
+  border: 1.5px solid #475569;
+  border-radius: 8px 8px 2px 2px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 2px;
+  overflow: hidden;
+}
+
+.coffee-bean-seed {
+  width: 6px;
+  height: 8px;
+  background: #451a03;
+  border-radius: 50%;
+  border: 0.5px solid #78350f;
+}
+
+.grinder-base-unit {
+  width: 100%;
+  background: linear-gradient(180deg, #475569 0%, #1e293b 100%);
+  border: 1.5px solid #0f172a;
+  border-radius: 5px;
+  padding: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.portafilter-prop {
+  width: 24px;
+  height: 10px;
+  background: #cbd5e1;
+  border: 1.5px solid #0f172a;
+  border-radius: 2px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.portafilter-handle {
+  position: absolute;
+  right: -9px;
+  width: 10px;
+  height: 4px;
+  background: #451a03;
+  border: 1px solid #000;
+  border-radius: 0 2px 2px 0;
+}
+
+/* Station 2: Espresso Machine */
+.espresso-machine-cell {
+  background: linear-gradient(180deg, #991b1b 0%, #7f1d1d 55%, #450a0a 100%);
+}
+
+.pressure-gauge-dial {
+  width: 18px;
+  height: 18px;
+  background: #ffffff;
+  border: 1.5px solid #0f172a;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gauge-pointer {
+  width: 1px;
+  height: 9px;
+  background: #dc2626;
+  position: absolute;
+  bottom: 50%;
+}
+
+.machine-group-heads {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  margin-top: 1px;
+}
+
+.espresso-stream {
+  width: 1.5px;
+  height: 8px;
+  background: #b45309;
+}
+
+.shot-glass {
+  width: 10px;
+  height: 12px;
+  background: rgba(254, 243, 199, 0.4);
+  border: 1px solid #0f172a;
+  border-radius: 0 0 2px 2px;
+  display: flex;
+  align-items: flex-end;
+}
+.shot-liquid {
+  width: 100%;
+  height: 7px;
+  background: #78350f;
+}
+
+/* Station 3: Milk Fridge */
+.milk-fridge-box {
+  width: 100%;
+  height: 42px;
+  background: #091324;
+  border: 1.5px solid #0284c7;
+  border-radius: 6px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  padding: 2px;
+  position: relative;
+}
+
+.milk-carton {
+  width: 12px;
+  height: 26px;
+  border: 1px solid #0f172a;
+  border-radius: 2px 2px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1px 0;
+  font-size: 5px;
+  font-weight: 900;
+  cursor: pointer;
+}
+.carton-whole {
+  background: #3b82f6;
+  color: #ffffff;
+}
+.carton-oat {
+  background: #fde68a;
+  color: #78350f;
+}
+
+/* Station 4: Syrups */
+.syrup-bottles-rack {
+  width: 100%;
+  height: 44px;
+  background: #110d21;
+  border: 1.5px solid #332657;
+  border-radius: 6px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  padding: 2px;
+}
+
+.syrup-bottle {
+  width: 10px;
+  height: 28px;
+  border: 1px solid #1a162b;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
+  cursor: pointer;
+}
+.syrup-pump-head {
+  position: absolute;
+  top: -6px;
+  width: 4px;
+  height: 6px;
+  background: #475569;
+}
+.syrup-caramel { background: #d97706; }
+.syrup-vanilla { background: #fef08a; }
+.syrup-mocha { background: #3b1a0e; }
+
+/* Station 5: Cups & Ice */
+.cups-stack-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+.cup-rim {
+  width: 16px;
+  height: 6px;
+  background: #ffffff;
+  border: 1px solid #1e293b;
+  border-radius: 2px 2px 0 0;
+}
+.cup-body {
+  width: 14px;
+  height: 16px;
+  background: #ffffff;
+  border: 1px solid #1e293b;
+  border-radius: 0 0 4px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7px;
+}
+
+.ice-bin-box {
+  width: 20px;
+  height: 26px;
+  background: rgba(8, 145, 178, 0.4);
+  border: 1.5px solid #22d3ee;
+  border-radius: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5px;
+  padding: 1px;
+  position: relative;
+  cursor: pointer;
+}
+.ice-cube {
+  width: 5px;
+  height: 5px;
+  background: #e0f2fe;
+  border: 0.5px solid #38bdf8;
+  border-radius: 1px;
+}
+
+/* ========================================================================= */
+/* LAYER 5: BARISTA PLAYER POSITION & ACTION BAR (BOTTOM ROW)                */
+/* ========================================================================= */
+.barista-player-tray {
+  width: 100%;
+  height: 44px;
+  background: #171227;
+  border: var(--game-border-width) solid var(--game-border-color);
+  border-radius: var(--border-radius);
+  padding: 4px 8px;
+  box-shadow: var(--game-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.player-avatar-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.barista-head-icon {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  background: #fed7aa;
+  border: 2px solid #1e1b2e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 0 #120e21;
+}
+
+.barista-visor {
+  position: absolute;
+  top: -2px;
+  width: 32px;
+  height: 10px;
+  background: #78350f;
+  border: 1px solid #1e1b2e;
+  border-radius: 10px 10px 0 0;
+}
+
+.barista-info-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.barista-name {
+  font-family: var(--font-arcade);
+  font-size: 8.5px;
+  color: #fcd34d;
+  line-height: 1;
+}
+
+.barista-held-pill {
+  font-size: 7.5px;
+  font-weight: 800;
+  color: #94a3b8;
+  margin-top: 1px;
+}
+.barista-held-item {
+  color: #34d399;
+  font-weight: 900;
+}
+
+.player-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}

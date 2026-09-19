@@ -1,0 +1,272 @@
+/* ========================================================================= */
+/* ANDROID MOBILE DEVICE CONTAINER & RESPONSIVE LAYOUT                       */
+/* ========================================================================= */
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #090710;
+  font-family: var(--font-main);
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Base Device Container (Target Platform: Android Mobile Game) */
+#device-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-dark);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  contain: layout paint;
+}
+
+/* Phone Frame Emulation Mode (Standard View for Mobile Game Development) */
+#device-container.device-phone {
+  width: min(430px, 98vw);
+  height: min(900px, 98vh);
+  max-width: 430px;
+  max-height: 900px;
+  border-radius: 44px;
+  box-shadow: 
+    0 0 0 10px #1c1830,
+    0 0 0 12px #2d264a,
+    0 0 0 14px #120e21,
+    0 25px 60px rgba(0, 0, 0, 0.9);
+  border: 4px solid #120e21;
+}
+
+/* Full Viewport Mode (when testing full mobile / Android directly) */
+#device-container.device-fullscreen {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  height: 100% !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Android Status Bar Simulation */
+.android-status-bar {
+  flex-shrink: 0;
+  height: 28px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(15, 12, 27, 0.95);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  font-family: var(--font-numeric);
+  font-size: 11px;
+  font-weight: 800;
+  color: #cbd5e1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.status-camera-notch {
+  width: 12px;
+  height: 12px;
+  background-color: #05040a;
+  border: 2px solid #201a35;
+  border-radius: 50%;
+  box-shadow: inset 0 0 3px #000;
+}
+
+.status-icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+}
+
+.status-signal {
+  letter-spacing: -2px;
+  color: #10b981;
+}
+
+.status-network {
+  font-size: 9px;
+  font-weight: 900;
+  background: #334155;
+  padding: 1px 3px;
+  border-radius: 3px;
+}
+
+.status-battery {
+  width: 18px;
+  height: 9px;
+  border: 1.5px solid #94a3b8;
+  border-radius: 2px;
+  padding: 1px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.status-battery::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: 2px;
+  width: 2px;
+  height: 3px;
+  background: #94a3b8;
+  border-radius: 0 1px 1px 0;
+}
+
+.battery-level {
+  width: 75%;
+  height: 100%;
+  background-color: #10b981;
+  border-radius: 1px;
+}
+
+/* Main Game Viewport */
+.game-viewport {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  contain: layout paint;
+}
+
+.screens-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Android Gesture Navigation Bar */
+.android-nav-bar {
+  flex-shrink: 0;
+  height: 18px;
+  background-color: var(--bg-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.android-home-pill {
+  width: 72px;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+}
+
+/* ========================================================================= */
+/* REVIEWER NAVIGATION PANEL (FOR STAGE 1 TESTING)                           */
+/* ========================================================================= */
+.dev-nav-panel {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  background: #171329ee;
+  border: 2px solid var(--amber-primary);
+  border-radius: 14px;
+  padding: 8px 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  max-width: 320px;
+  font-size: 11px;
+  transition: all 0.25s ease;
+}
+
+.dev-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.dev-nav-title {
+  font-family: var(--font-arcade);
+  color: var(--amber-light);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+}
+
+.dev-nav-toggle {
+  background: #2a2347;
+  border: 1px solid #4a3d75;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 9px;
+  padding: 1px 6px;
+  cursor: pointer;
+}
+
+.dev-nav-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.dev-btn {
+  background: #251e3d;
+  color: #e2e8f0;
+  border: 1px solid #483d6e;
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dev-btn:hover, .dev-btn.active {
+  background: var(--amber-primary);
+  color: #1a162b;
+  border-color: #fcd34d;
+  font-weight: 800;
+}
+
+.dev-btn-accent {
+  background: #4c1d95;
+  border-color: #8b5cf6;
+}
+
+.dev-nav-panel.collapsed .dev-nav-buttons {
+  display: none;
+}
+.dev-nav-panel.collapsed .dev-nav-toggle {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 600px) {
+  #device-container.device-phone {
+    max-width: 100%;
+    max-height: 100%;
+    height: 100%;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+  }
+  .dev-nav-panel {
+    bottom: 24px;
+    right: 8px;
+    left: 8px;
+    max-width: none;
+  }
+}

@@ -1,0 +1,130 @@
+/* ========================================================================= */
+/* ESPRESSO EXPRESS 2D GAME ANIMATIONS                                       */
+/* ========================================================================= */
+
+/* Train Rumble */
+@keyframes trainRumble {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-2.5px); }
+}
+
+/* Steam Bursts */
+@keyframes steamBurst {
+  0% { transform: scale(0.6) translateY(0) rotate(0deg); opacity: 0.9; }
+  50% { transform: scale(1.4) translateY(-24px) rotate(15deg); opacity: 0.6; }
+  100% { transform: scale(2.0) translateY(-48px) rotate(-10deg); opacity: 0; }
+}
+
+@keyframes steamBurst2 {
+  0% { transform: scale(0.5) translateY(0) rotate(0deg); opacity: 0.8; }
+  60% { transform: scale(1.6) translateY(-32px) rotate(-20deg); opacity: 0.4; }
+  100% { transform: scale(2.2) translateY(-54px) rotate(25deg); opacity: 0; }
+}
+
+/* Pressure Gauge Needle */
+@keyframes gaugeNeedle {
+  0%, 100% { transform: rotate(45deg); }
+  25% { transform: rotate(72deg); }
+  65% { transform: rotate(58deg); }
+  85% { transform: rotate(68deg); }
+}
+
+/* Impatient Customer Tapping Foot */
+@keyframes angryFootTap {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-9deg); }
+}
+
+/* Flying Sweat Drop */
+@keyframes sweatDrop {
+  0% { transform: translateY(0) scale(1); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translateY(16px) scale(0.6); opacity: 0; }
+}
+
+/* Sleepy Commuter Nodding Off */
+@keyframes sleepyNod {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  45% { transform: rotate(8deg) translateY(5px); }
+  55% { transform: rotate(7deg) translateY(4px); }
+}
+
+/* Bouncing Elements */
+@keyframes bounceHover {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes gentlePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+/* Neon Sign Blink */
+@keyframes blinkSign {
+  0%, 100% { opacity: 1; }
+  48% { opacity: 1; }
+  50% { opacity: 0.25; }
+  52% { opacity: 1; }
+  85% { opacity: 1; }
+  87% { opacity: 0.35; }
+}
+
+/* Ticket Rail Flutter */
+@keyframes ticketFlutter {
+  0%, 100% { transform: rotate(0deg); }
+  35% { transform: rotate(-2.5deg); }
+  75% { transform: rotate(3deg); }
+}
+
+/* Train Light Sweep */
+@keyframes trainLightsSweep {
+  0% { transform: translateX(-150%); }
+  100% { transform: translateX(300%); }
+}
+
+/* Rush Hour Alert Border Flash */
+@keyframes rushBorderPulse {
+  0%, 100% { box-shadow: inset 0 0 0 4px #ef4444, 0 0 15px rgba(239, 68, 68, 0.6); }
+  50% { box-shadow: inset 0 0 0 4px #eab308, 0 0 25px rgba(234, 179, 8, 0.8); }
+}
+
+/* Screen Slide Transitions */
+@keyframes screenEnter {
+  0% { opacity: 0; transform: translateY(12px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Modal Pop Scale & Fade (In-Place, Prevents Mobile Frame Overflow) */
+@keyframes modalPop {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.92) translateY(12px); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1) translateY(0); 
+  }
+}
+
+/* Golden Star / Bean Earn Animation */
+@keyframes starReveal {
+  0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+  70% { transform: scale(1.25) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* Utility Animation Classes */
+.anim-train { animation: trainRumble 0.35s infinite ease-in-out; }
+.anim-steam-1 { animation: steamBurst 1.8s infinite ease-out; }
+.anim-steam-2 { animation: steamBurst2 2.1s infinite ease-out 0.6s; }
+.anim-needle { transform-origin: 50% 90%; animation: gaugeNeedle 1.2s infinite ease-in-out; }
+.anim-foot { transform-origin: left bottom; animation: angryFootTap 0.35s infinite ease-in-out; }
+.anim-sweat { animation: sweatDrop 1.2s infinite ease-in; }
+.anim-sleepy { transform-origin: center bottom; animation: sleepyNod 3.2s infinite ease-in-out; }
+.anim-bounce { animation: bounceHover 1.5s infinite ease-in-out; }
+.anim-pulse { animation: gentlePulse 2s infinite ease-in-out; }
+.anim-flicker { animation: blinkSign 4.2s infinite; }
+.anim-ticket { transform-origin: top center; animation: ticketFlutter 2.5s infinite ease-in-out; }
+.screen-animate-in { animation: screenEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.modal-animate-in { animation: modalPop 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }

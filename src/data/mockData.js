@@ -1,0 +1,268 @@
+/* ========================================================================= */
+/* ESPRESSO EXPRESS MOCK DATA FOR STAGE 1 UI                                 */
+/* ========================================================================= */
+
+export const MOCK_ORDERS = [
+  {
+    id: "101",
+    customer: "Mr. Sterling",
+    customerType: "Stressed Commuter",
+    drinkName: "Double Espresso",
+    urgency: "urgent", // 'urgent' | 'normal' | 'relaxed'
+    timeLeft: 14,
+    price: 4.75,
+    tipBonus: 2.00,
+    trainTime: "14s",
+    size: "Small (Demitasse)",
+    milk: "None",
+    shots: 2,
+    syrup: "None",
+    ice: false,
+    temp: "Hot (195°F)",
+    notes: "TRAIN CLOSING! HURRY!",
+    icon: "☕",
+    color: "#ef4444"
+  },
+  {
+    id: "102",
+    customer: "Dave (Night Shift)",
+    customerType: "Sleepy Worker",
+    drinkName: "Large Oat Latte",
+    urgency: "normal",
+    timeLeft: 38,
+    price: 6.25,
+    tipBonus: 1.50,
+    trainTime: "40s",
+    size: "Large (16oz)",
+    milk: "Oat Milk (Steamed)",
+    shots: 2,
+    syrup: "Vanilla (1 Pump)",
+    ice: false,
+    temp: "Extra Hot (165°F)",
+    notes: "Double cup please... so tired zzz",
+    icon: "🥛",
+    color: "#3b82f6"
+  },
+  {
+    id: "103",
+    customer: "Chloe Z.",
+    customerType: "Gen-Z Student",
+    drinkName: "Iced Caramel Macchiato",
+    urgency: "normal",
+    timeLeft: 52,
+    price: 7.50,
+    tipBonus: 2.50,
+    trainTime: "60s",
+    size: "Medium (12oz)",
+    milk: "Whole Milk",
+    shots: 2,
+    syrup: "Caramel (3 Pumps)",
+    ice: true,
+    temp: "Iced Cold",
+    notes: "Light ice & extra drizzle for TikTok!",
+    icon: "🧊",
+    color: "#8b5cf6"
+  },
+  {
+    id: "104",
+    customer: "Jaxson",
+    customerType: "Fitness Beast",
+    drinkName: "Cold Brew Beast Shot",
+    urgency: "relaxed",
+    timeLeft: 75,
+    price: 6.00,
+    tipBonus: 2.00,
+    trainTime: "80s",
+    size: "Large (16oz)",
+    milk: "Oat Splash",
+    shots: 4,
+    syrup: "Zero Sugar Mocha",
+    ice: true,
+    temp: "Chilled",
+    notes: "Maximum caffeine before leg day!",
+    icon: "💪",
+    color: "#10b981"
+  }
+];
+
+export const MOCK_UPGRADES = [
+  {
+    id: "grinder_v2",
+    category: "equipment",
+    name: "Commercial Burr Grinder",
+    level: 2,
+    maxLevel: 5,
+    price: 220,
+    currency: "coin",
+    icon: "⚙️",
+    description: "Titanium flat burrs grind espresso beans 25% faster with zero clumping.",
+    statBonus: "+25% Grind Speed",
+    status: "available"
+  },
+  {
+    id: "espresso_3group",
+    category: "equipment",
+    name: "3-Group Pro Espresso Machine",
+    level: 1,
+    maxLevel: 3,
+    price: 650,
+    currency: "coin",
+    icon: "☕",
+    description: "Add a third extraction group to brew double shots simultaneously.",
+    statBonus: "Dual Simultaneous Pulls",
+    status: "available"
+  },
+  {
+    id: "dual_steam_wand",
+    category: "equipment",
+    name: "Turbo Steam Pitcher Wand",
+    level: 2,
+    maxLevel: 4,
+    price: 180,
+    currency: "coin",
+    icon: "💨",
+    description: "High-pressure micro-foam injector whips silky milk in half the time.",
+    statBonus: "+35% Froth Speed",
+    status: "available"
+  },
+  {
+    id: "ice_crusher_xl",
+    category: "equipment",
+    name: "Rapid Chiller & Ice Bin XL",
+    level: 1,
+    maxLevel: 3,
+    price: 140,
+    currency: "coin",
+    icon: "🧊",
+    description: "Auto-dispense crushed & cubed ice without manual scoop delay.",
+    statBonus: "+20% Ice Speed",
+    status: "available"
+  },
+  {
+    id: "oat_milk_stock",
+    category: "ingredients",
+    name: "Barista Oat & Almond Stock",
+    level: 3,
+    maxLevel: 3,
+    price: 300,
+    currency: "coin",
+    icon: "🌾",
+    description: "Artisan plant-based milks loved by trendy commuters.",
+    statBonus: "+$1.00 Tip per Latte",
+    status: "maxed"
+  },
+  {
+    id: "gourmet_syrups",
+    category: "ingredients",
+    name: "Artisan Syrup Quartet",
+    level: 2,
+    maxLevel: 4,
+    price: 195,
+    currency: "coin",
+    icon: "🍯",
+    description: "Salted Caramel, French Vanilla, Hazelnut & Dark Cocoa mocha sauces.",
+    statBonus: "+15% Drink Score",
+    status: "available"
+  },
+  {
+    id: "nitro_tap",
+    category: "ingredients",
+    name: "Nitro Cold Brew Keg Tap",
+    level: 0,
+    maxLevel: 2,
+    price: 500,
+    currency: "token",
+    icon: "⚡",
+    description: "Creamy nitrogen-infused draft cold brew for high-paying rush hours.",
+    statBonus: "Unlocks Nitro Menu",
+    status: "locked",
+    unlockRequirement: "Reach Barista Level 5"
+  },
+  {
+    id: "speed_apron",
+    category: "gear",
+    name: "Pro Barista Ergonomic Apron",
+    level: 2,
+    maxLevel: 3,
+    price: 250,
+    currency: "coin",
+    icon: "🎽",
+    description: "Heavy canvas pockets for instant towel and scoop access.",
+    statBonus: "+15% Counter Reach",
+    status: "available"
+  },
+  {
+    id: "loud_station_bell",
+    category: "gear",
+    name: "Brass Rush Call Bell",
+    level: 1,
+    maxLevel: 2,
+    price: 110,
+    currency: "coin",
+    icon: "🔔",
+    description: "Rings loudly across Platform 9 to call commuters instantly.",
+    statBonus: "+2s Commuter Patience",
+    status: "available"
+  },
+  {
+    id: "mta_subway_pass",
+    category: "perks",
+    name: "MTA Station Vendor Permit",
+    level: 1,
+    maxLevel: 3,
+    price: 350,
+    currency: "coin",
+    icon: "🎫",
+    description: "Official kiosk license brings +20% passenger foot traffic.",
+    statBonus: "+20% Rush Customers",
+    status: "available"
+  },
+  {
+    id: "neon_espresso_sign",
+    category: "perks",
+    name: "Neon Platform Billboard",
+    level: 2,
+    maxLevel: 3,
+    price: 275,
+    currency: "coin",
+    icon: "💡",
+    description: "Glowing sign visible from the opposite express track.",
+    statBonus: "+10% Rush Combo Duration",
+    status: "available"
+  }
+];
+
+export const MOCK_SHIFT_RESULTS = {
+  shiftNumber: 4,
+  shiftTitle: "Morning Rush Hour - Platform 9",
+  ratingStars: 3,
+  grade: "S",
+  customersServed: 28,
+  totalCustomers: 30,
+  perfectOrders: 26,
+  perfectPercentage: "93%",
+  missedTrains: 2,
+  longestCombo: 12,
+  basePay: 250.00,
+  tipsEarned: 142.50,
+  rushBonus: 45.00,
+  totalEarned: 437.50,
+  tokensAwarded: 5,
+  satisfactionScore: 96,
+  highlights: [
+    "⚡ Unbroken 12x Rush Combo!",
+    "☕ 14 Double Espressos pulled under 6 seconds",
+    "🚆 Only 2 missed trains during the 8:45 AM Express rush"
+  ]
+};
+
+export const MOCK_SETTINGS = {
+  masterVolume: 85,
+  musicVolume: 70,
+  sfxVolume: 90,
+  hapticFeedback: true,
+  screenShake: true,
+  rushFlashes: true,
+  highContrast: false,
+  language: "English (US)"
+};

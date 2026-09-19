@@ -1,0 +1,69 @@
+/* ========================================================================= */
+/* ESPRESSO EXPRESS DESIGN TOKENS                                            */
+/* ========================================================================= */
+
+:root {
+  /* Color Palette - Subway & Urban Arcade */
+  --bg-dark: #0f0c1b;
+  --bg-card: #1b152e;
+  --bg-card-light: #241d3d;
+  --bg-subway-tile: #242038;
+  --bg-panel-metal: #334155;
+  --bg-panel-dark: #161224;
+
+  /* Accent Colors */
+  --coffee-dark: #3f1e09;
+  --coffee-medium: #78350f;
+  --coffee-roast: #451a03;
+  --coffee-crema: #d97736;
+  --coffee-foam: #fcd34d;
+
+  --amber-primary: #f59e0b;
+  --amber-light: #fbbf24;
+  --amber-dark: #b45309;
+
+  --emerald-primary: #10b981;
+  --emerald-light: #34d399;
+  --emerald-dark: #065f46;
+
+  --rose-primary: #f43f5e;
+  --rose-light: #fb7185;
+  --rose-dark: #9f1239;
+
+  --sky-primary: #0ea5e9;
+  --sky-light: #38bdf8;
+  --sky-dark: #0369a1;
+
+  --purple-primary: #8b5cf6;
+  --purple-light: #a78bfa;
+  --purple-dark: #5b21b6;
+
+  --yellow-coin: #eab308;
+  --yellow-glow: #fef08a;
+
+  /* Typography */
+  --font-main: 'Fredoka', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-arcade: 'Bungee', cursive;
+  --font-numeric: 'Nunito', sans-serif;
+
+  /* Outline & Borders (2D Arcade Comic Aesthetic) */
+  --game-border-color: #1a162b;
+  --game-border-width-sm: 2px;
+  --game-border-width: 3px;
+  --game-border-width-lg: 4px;
+  --border-radius-sm: 6px;
+  --border-radius: 12px;
+  --border-radius-lg: 18px;
+  --border-radius-full: 9999px;
+
+  /* Shadows for 2D Depth */
+  --game-shadow-sm: 0 3px 0 #120e21;
+  --game-shadow: 0 5px 0 #120e21, 0 8px 16px rgba(0, 0, 0, 0.45);
+  --game-shadow-lg: 0 8px 0 #0d0a18, 0 14px 24px rgba(0, 0, 0, 0.6);
+  --game-shadow-inset: inset 0 2px 4px rgba(255, 255, 255, 0.15), inset 0 -3px 0 rgba(0, 0, 0, 0.4);
+
+  /* Touch & Safe Area */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --touch-target-min: 44px;
+}
