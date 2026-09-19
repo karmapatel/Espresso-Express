@@ -29,6 +29,30 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.URL
 
+enum class UpdateState {
+    IDLE,
+    CHECKING,
+    UP_TO_DATE,
+    UPDATE_AVAILABLE,
+    FAILED
+}
+
+fun compareVersions(v1: String, v2: String): Int {
+    val clean1 = v1.removePrefix("v").trim()
+    val clean2 = v2.removePrefix("v").trim()
+    val parts1 = clean1.split(".").map { it.toIntOrNull() ?: 0 }
+    val parts2 = clean2.split(".").map { it.toIntOrNull() ?: 0 }
+    val maxLen = maxOf(parts1.size, parts2.size)
+    for (i in 0 until maxLen) {
+        val p1 = parts1.getOrElse(i) { 0 }
+        val p2 = parts2.getOrElse(i) { 0 }
+        if (p1 != p2) {
+            return p1.compareTo(p2)
+        }
+    }
+    return 0
+}
+
 @Composable
 fun SettingsScreen(
     gameState: GameState,
@@ -36,20 +60,22 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val packageInfo = remember {
+    val currentVersionName = remember {
         try {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            val pInfo = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 context.packageManager.getPackageInfo(context.packageName, android.content.pm.PackageManager.PackageInfoFlags.of(0))
             } else {
                 @Suppress("DEPRECATION")
                 context.packageManager.getPackageInfo(context.packageName, 0)
             }
+            pInfo.versionName ?: "1.0.7"
         } catch (e: Exception) {
-            null
+            "1.0.7"
         }
     }
-    val currentVersionName = com.espressoexpress.arcade.BuildConfig.VERSION_NAME
-    var checkUpdateStatus by remember { mutableStateOf("Ready to check") }
+    var updateState by remember { mutableStateOf(UpdateState.IDLE) }
+    var latestVersionName by remember { mutableStateOf("") }
+    var latestApkUrl by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
@@ -187,130 +213,322 @@ fun SettingsScreen(
                     .background(Color(0xFF1E1A3D), shape = RoundedCornerShape(12.dp))
                     .border(1.dp, PurpleAccent, shape = RoundedCornerShape(12.dp))
                     .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = "📶 APK DISTRIBUTION SYSTEM",
                     fontSize = 11.sp,
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold,
-                    color = AmberAccent
+                    color = AmberAccent,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Start
                 )
 
                 Text(
                     text = "This application is connected to the live Espresso Express build network. Tapping below queries the version registry, compares your local package signatures, and triggers native browser updates.",
                     fontSize = 11.sp,
                     color = TextPrimary,
-                    lineHeight = 16.sp
+                    lineHeight = 16.sp,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Start
                 )
 
                 Spacer(modifier = Modifier.height(6.dp))
 
-                Button(
-                    onClick = {
-                        scope.launch {
-                            checkUpdateStatus = "Contacting version registry..."
-                            try {
-                                val urls = listOf(
-                                    "https://raw.githubusercontent.com/karmapatel/Espresso-Express/main/public/version.json",
-                                    "https://raw.githubusercontent.com/karmapatel/Espresso-Express/master/public/version.json",
-                                    "https://ais-pre-472yxwq4z56wuftegmr7lu-324319867172.asia-southeast1.run.app/version.json",
-                                    "https://ais-dev-472yxwq4z56wuftegmr7lu-324319867172.asia-southeast1.run.app/version.json"
-                                )
-                                var resultStr: String? = null
-                                var lastException: Exception? = null
-                                
-                                withContext(Dispatchers.IO) {
-                                    for (urlStr in urls) {
-                                        try {
-                                            val url = URL(urlStr)
-                                            val connection = url.openConnection() as java.net.HttpURLConnection
-                                            connection.requestMethod = "GET"
-                                            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) EspressoExpressUpdater/1.0.1")
-                                            connection.connectTimeout = 6000
-                                            connection.readTimeout = 6000
-                                            connection.doInput = true
-                                            
-                                            val responseCode = connection.responseCode
-                                            if (responseCode == java.net.HttpURLConnection.HTTP_OK) {
-                                                val content = connection.inputStream.bufferedReader().use { it.readText() }.trim()
-                                                if (content.startsWith("{") && content.endsWith("}")) {
-                                                    resultStr = content
-                                                    break
-                                                } else if (content.startsWith("<!DOCTYPE") || content.startsWith("<html")) {
-                                                    lastException = Exception("Preview is password protected. Please use GitHub build.")
-                                                } else {
-                                                    lastException = Exception("Invalid response format received")
-                                                }
-                                            } else {
-                                                lastException = Exception("HTTP $responseCode from update server")
-                                            }
-                                        } catch (e: Exception) {
-                                            lastException = e
-                                        }
-                                    }
-                                }
-
-                                if (resultStr == null) {
-                                    throw lastException ?: Exception("Network request yielded empty result")
-                                }
-
-                                val json = JSONObject(resultStr!!)
-                                val serverVersionCode = json.optInt("versionCode", 101)
-                                val serverVersionName = json.optString("versionName", "1.0.1")
-                                val apkUrl = json.optString("apkUrl", "")
-
-                                // Get package versionCode
-                                val currentCode = com.espressoexpress.arcade.BuildConfig.VERSION_CODE
-
-                                if (serverVersionCode > currentCode) {
-                                    checkUpdateStatus = "New build v$serverVersionName ready!"
-                                    gameState.triggerToast("Downloading Espresso Express Update!", "📶")
-                                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(apkUrl))
-                                    context.startActivity(browserIntent)
-                                } else {
-                                    checkUpdateStatus = "v$currentVersionName (Up to date)"
-                                    gameState.triggerToast("Already on latest build v$currentVersionName!", "📶")
-                                }
-                            } catch (e: Exception) {
-                                val errMsg = e.message ?: e.javaClass.simpleName ?: "Connection Error"
-                                checkUpdateStatus = "Failed: $errMsg"
-                                gameState.triggerToast("Update check failed: $errMsg", "⚠️")
-                            }
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = PurpleAccent),
-                    shape = RoundedCornerShape(10.dp)
-                ) {
-                    Text(
-                        text = "CHECK FOR SYSTEM UPDATES",
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+                Text(
+                    text = "Current Version",
+                    fontSize = 11.sp,
+                    fontFamily = FontFamily.Monospace,
+                    color = TextSecondary,
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = "v$currentVersionName",
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary,
+                    textAlign = TextAlign.Center
+                )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Text(
-                    text = "Current App Version: $currentVersionName",
-                    fontSize = 11.sp,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold,
-                    color = AmberAccent,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
+                when (updateState) {
+                    UpdateState.IDLE -> {
+                        Button(
+                            onClick = {
+                                scope.launch {
+                                    updateState = UpdateState.CHECKING
+                                    try {
+                                        val urls = listOf(
+                                            "https://raw.githubusercontent.com/karmapatel/Espresso-Express/main/public/version.json",
+                                            "https://raw.githubusercontent.com/karmapatel/Espresso-Express/master/public/version.json",
+                                            "https://api.github.com/repos/karmapatel/Espresso-Express/releases/latest",
+                                            "https://api.github.com/repos/karmapatel4/Espresso-Express/releases/latest"
+                                        )
+                                        var foundVersion: String? = null
+                                        var foundApkUrl: String? = null
+                                        var lastEx: Exception? = null
 
-                Text(
-                    text = "Update Status: $checkUpdateStatus",
-                    fontSize = 10.sp,
-                    fontFamily = FontFamily.Monospace,
-                    color = TextSecondary,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
+                                        withContext(Dispatchers.IO) {
+                                            for (urlStr in urls) {
+                                                try {
+                                                    val url = URL(urlStr)
+                                                    val connection = url.openConnection() as java.net.HttpURLConnection
+                                                    connection.requestMethod = "GET"
+                                                    connection.setRequestProperty("User-Agent", "EspressoExpressUpdater/1.0.7")
+                                                    connection.connectTimeout = 6000
+                                                    connection.readTimeout = 6000
+                                                    connection.doInput = true
+
+                                                    val responseCode = connection.responseCode
+                                                    if (responseCode == java.net.HttpURLConnection.HTTP_OK) {
+                                                        val content = connection.inputStream.bufferedReader().use { it.readText() }.trim()
+                                                        if (urlStr.contains("releases/latest")) {
+                                                            val json = JSONObject(content)
+                                                            val tag = json.optString("tag_name", "").trim()
+                                                            if (tag.isNotEmpty()) {
+                                                                foundVersion = tag.removePrefix("v")
+                                                                val assets = json.optJSONArray("assets")
+                                                                if (assets != null && assets.length() > 0) {
+                                                                    for (i in 0 until assets.length()) {
+                                                                        val asset = assets.optJSONObject(i)
+                                                                        val name = asset.optString("name", "")
+                                                                        if (name.endsWith(".apk")) {
+                                                                            foundApkUrl = asset.optString("browser_download_url", "")
+                                                                            break
+                                                                        }
+                                                                    }
+                                                                }
+                                                                if (foundApkUrl == null) {
+                                                                    foundApkUrl = "https://github.com/karmapatel/Espresso-Express/releases/download/$tag/espresso-express.apk"
+                                                                }
+                                                                break
+                                                            }
+                                                        } else {
+                                                            val json = JSONObject(content)
+                                                            val vName = json.optString("versionName", "").trim()
+                                                            if (vName.isNotEmpty()) {
+                                                                foundVersion = vName
+                                                                foundApkUrl = json.optString("apkUrl", "")
+                                                                break
+                                                            }
+                                                        }
+                                                    } else {
+                                                        lastEx = Exception("HTTP $responseCode")
+                                                    }
+                                                } catch (e: Exception) {
+                                                    lastEx = e
+                                                }
+                                            }
+                                        }
+
+                                        if (foundVersion == null) {
+                                            throw lastEx ?: Exception("Connection timed out")
+                                        }
+
+                                        latestVersionName = foundVersion!!
+                                        latestApkUrl = foundApkUrl ?: "https://ais-pre-472yxwq4z56wuftegmr7lu-324319867172.asia-southeast1.run.app/downloads/EspressoExpress.apk"
+
+                                        if (compareVersions(latestVersionName, currentVersionName) > 0) {
+                                            updateState = UpdateState.UPDATE_AVAILABLE
+                                        } else {
+                                            updateState = UpdateState.UP_TO_DATE
+                                        }
+                                    } catch (e: Exception) {
+                                        updateState = UpdateState.FAILED
+                                    }
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(containerColor = PurpleAccent),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Text(
+                                text = "CHECK FOR UPDATES",
+                                fontFamily = FontFamily.Monospace,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                    UpdateState.CHECKING -> {
+                        CircularProgressIndicator(color = PurpleAccent, modifier = Modifier.size(24.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Checking for updates...",
+                            fontSize = 11.sp,
+                            fontFamily = FontFamily.Monospace,
+                            color = TextSecondary,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    UpdateState.UP_TO_DATE -> {
+                        Text(
+                            text = "You're up to date.",
+                            fontSize = 12.sp,
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF10B981),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    UpdateState.UPDATE_AVAILABLE -> {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "New Version Available",
+                                fontSize = 11.sp,
+                                fontFamily = FontFamily.Monospace,
+                                color = AmberAccent,
+                                textAlign = TextAlign.Center
+                            )
+                            Text(
+                                text = "v$latestVersionName",
+                                fontSize = 18.sp,
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF10B981),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(bottom = 12.dp)
+                            )
+                            Button(
+                                onClick = {
+                                    gameState.triggerToast("Downloading Update APK...", "📶")
+                                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(latestApkUrl))
+                                    context.startActivity(browserIntent)
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981)),
+                                shape = RoundedCornerShape(10.dp)
+                            ) {
+                                Text(
+                                    text = "DOWNLOAD UPDATE",
+                                    fontFamily = FontFamily.Monospace,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                )
+                            }
+                        }
+                    }
+                    UpdateState.FAILED -> {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Unable to check for updates.",
+                                fontSize = 12.sp,
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFFEF4444),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(bottom = 12.dp)
+                            )
+                            Button(
+                                onClick = {
+                                    scope.launch {
+                                        updateState = UpdateState.CHECKING
+                                        try {
+                                            val urls = listOf(
+                                                "https://raw.githubusercontent.com/karmapatel/Espresso-Express/main/public/version.json",
+                                                "https://raw.githubusercontent.com/karmapatel/Espresso-Express/master/public/version.json",
+                                                "https://api.github.com/repos/karmapatel/Espresso-Express/releases/latest",
+                                                "https://api.github.com/repos/karmapatel4/Espresso-Express/releases/latest"
+                                            )
+                                            var foundVersion: String? = null
+                                            var foundApkUrl: String? = null
+                                            var lastEx: Exception? = null
+
+                                            withContext(Dispatchers.IO) {
+                                                for (urlStr in urls) {
+                                                    try {
+                                                        val url = URL(urlStr)
+                                                        val connection = url.openConnection() as java.net.HttpURLConnection
+                                                        connection.requestMethod = "GET"
+                                                        connection.setRequestProperty("User-Agent", "EspressoExpressUpdater/1.0.7")
+                                                        connection.connectTimeout = 6000
+                                                        connection.readTimeout = 6000
+                                                        connection.doInput = true
+
+                                                        val responseCode = connection.responseCode
+                                                        if (responseCode == java.net.HttpURLConnection.HTTP_OK) {
+                                                            val content = connection.inputStream.bufferedReader().use { it.readText() }.trim()
+                                                            if (urlStr.contains("releases/latest")) {
+                                                                val json = JSONObject(content)
+                                                                val tag = json.optString("tag_name", "").trim()
+                                                                if (tag.isNotEmpty()) {
+                                                                    foundVersion = tag.removePrefix("v")
+                                                                    val assets = json.optJSONArray("assets")
+                                                                    if (assets != null && assets.length() > 0) {
+                                                                        for (i in 0 until assets.length()) {
+                                                                            val asset = assets.optJSONObject(i)
+                                                                            val name = asset.optString("name", "")
+                                                                            if (name.endsWith(".apk")) {
+                                                                                foundApkUrl = asset.optString("browser_download_url", "")
+                                                                                break
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    if (foundApkUrl == null) {
+                                                                        foundApkUrl = "https://github.com/karmapatel/Espresso-Express/releases/download/$tag/espresso-express.apk"
+                                                                    }
+                                                                    break
+                                                                }
+                                                            } else {
+                                                                val json = JSONObject(content)
+                                                                val vName = json.optString("versionName", "").trim()
+                                                                if (vName.isNotEmpty()) {
+                                                                    foundVersion = vName
+                                                                    foundApkUrl = json.optString("apkUrl", "")
+                                                                    break
+                                                                }
+                                                            }
+                                                        } else {
+                                                            lastEx = Exception("HTTP $responseCode")
+                                                        }
+                                                    } catch (e: Exception) {
+                                                        lastEx = e
+                                                    }
+                                                }
+                                            }
+
+                                            if (foundVersion == null) {
+                                                throw lastEx ?: Exception("Connection timed out")
+                                            }
+
+                                            latestVersionName = foundVersion!!
+                                            latestApkUrl = foundApkUrl ?: "https://ais-pre-472yxwq4z56wuftegmr7lu-324319867172.asia-southeast1.run.app/downloads/EspressoExpress.apk"
+
+                                            if (compareVersions(latestVersionName, currentVersionName) > 0) {
+                                                updateState = UpdateState.UPDATE_AVAILABLE
+                                            } else {
+                                                updateState = UpdateState.UP_TO_DATE
+                                            }
+                                        } catch (e: Exception) {
+                                            updateState = UpdateState.FAILED
+                                        }
+                                    }
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444)),
+                                shape = RoundedCornerShape(10.dp)
+                            ) {
+                                Text(
+                                    text = "TRY AGAIN",
+                                    fontFamily = FontFamily.Monospace,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(30.dp))
