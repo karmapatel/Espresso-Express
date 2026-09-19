@@ -279,13 +279,14 @@ class GameState(
                 val iterator = activeOrders.iterator()
                 while (iterator.hasNext()) {
                     val order = iterator.next()
-                    val pReduction = if (isRushActive) 0.05f else 0.03f
-                    order.patience -= pReduction
-                    if (order.patience <= 0f) {
-                        iterator.remove()
-                        handleOrderFailed(order)
-                        break
-                    }
+                    // Time bound patience removed - customers are permanent!
+                    // val pReduction = if (isRushActive) 0.05f else 0.03f
+                    // order.patience -= pReduction
+                    // if (order.patience <= 0f) {
+                    //     iterator.remove()
+                    //     handleOrderFailed(order)
+                    //     break
+                    // }
                 }
 
                 if (activeOrders.size < 4 && Random.nextFloat() < 0.25f) {

@@ -20,13 +20,31 @@ import androidx.compose.ui.unit.sp
 import com.espressoexpress.arcade.AppScreen
 import com.espressoexpress.arcade.game.GameState
 import com.espressoexpress.arcade.ui.theme.*
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.net.URL
 
 @Composable
 fun SettingsScreen(
     gameState: GameState,
     onNavigateTo: (AppScreen) -> Unit
 ) {
-    var checkUpdateStatus by remember { mutableStateOf("Ready to Check") }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val packageInfo = remember {
+        try {
+            context.packageManager.getPackageInfo(context.packageName, 0)
+        } catch (e: Exception) {
+            null
+        }
+    }
+    val currentVersionName = packageInfo?.versionName ?: "1.0.0"
+    var checkUpdateStatus by remember { mutableStateOf("v$currentVersionName (Ready)") }
 
     Box(
         modifier = Modifier
@@ -175,7 +193,7 @@ fun SettingsScreen(
                 )
 
                 Text(
-                    text = "This application is ready for self-hosted updates. In the future, tapping below will query GitHub releases, fetch the signed APK payload, and launch the native Android package installer.",
+                    text = "This application is connected to the live Espresso Express build network. Tapping below queries the version registry, compares your local package signatures, and triggers native browser updates.",
                     fontSize = 11.sp,
                     color = TextPrimary,
                     lineHeight = 16.sp
@@ -185,10 +203,39 @@ fun SettingsScreen(
 
                 Button(
                     onClick = {
-                        checkUpdateStatus = "Connecting to GitHub..."
-                        // Simulate update check
-                        gameState.triggerToast("Update Checker: Already running latest build v1.0.0", "📶")
-                        checkUpdateStatus = "v1.0.0 (Up to Date)"
+                        scope.launch {
+                            checkUpdateStatus = "Contacting version registry..."
+                            try {
+                                val result = withContext(Dispatchers.IO) {
+                                    URL("https://ais-pre-472yxwq4z56wuftegmr7lu-324319867172.asia-southeast1.run.app/version.json").readText()
+                                }
+                                val json = JSONObject(result)
+                                val serverVersionCode = json.optInt("versionCode", 100)
+                                val serverVersionName = json.optString("versionName", "1.0.0")
+                                val apkUrl = json.optString("apkUrl", "")
+
+                                // Get package versionCode
+                                val currentCode = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                                    packageInfo?.longVersionCode?.toInt() ?: 100
+                                } else {
+                                    @Suppress("DEPRECATION")
+                                    packageInfo?.versionCode ?: 100
+                                }
+
+                                if (serverVersionCode > currentCode) {
+                                    checkUpdateStatus = "New build v$serverVersionName ready!"
+                                    gameState.triggerToast("Downloading Espresso Express Update!", "📶")
+                                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(apkUrl))
+                                    context.startActivity(browserIntent)
+                                } else {
+                                    checkUpdateStatus = "v$currentVersionName (Up to date)"
+                                    gameState.triggerToast("Already on the latest build!", "📶")
+                                }
+                            } catch (e: Exception) {
+                                checkUpdateStatus = "Offline / Connection failed"
+                                gameState.triggerToast("Could not reach update server", "⚠️")
+                            }
+                        }
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = PurpleAccent),

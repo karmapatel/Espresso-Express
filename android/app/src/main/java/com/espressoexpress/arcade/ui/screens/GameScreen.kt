@@ -611,6 +611,7 @@ fun GameScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(Color(0xFF1D1735))
+                            .horizontalScroll(rememberScrollState())
                             .padding(horizontal = 14.dp, vertical = 6.dp),
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -688,7 +689,7 @@ fun GameScreen(
                         Box(modifier = Modifier.weight(1f)) {
                             PhysicalCabinet(title = "1. GRIND & CUP", statusTag = if (gameState.workbench.currentCupSize != "None") "CUP HELD" else "READY") {
                                 Row(
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier.fillMaxWidth().height(100.dp),
                                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                                 ) {
                                     Column(modifier = Modifier.weight(1.3f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -696,12 +697,11 @@ fun GameScreen(
                                         CabinetBtn(text = "MEDIUM", color = Color(0xFF64748B)) { gameState.grabCup("Medium") }
                                         CabinetBtn(text = "LARGE", color = Color(0xFF64748B)) { gameState.grabCup("Large") }
                                     }
-                                    Box(modifier = Modifier.weight(1.1f)) {
+                                    Box(modifier = Modifier.weight(1.1f).fillMaxHeight()) {
                                         Button(
                                             onClick = { gameState.grindBeans() },
                                             modifier = Modifier
-                                                .fillMaxHeight()
-                                                .fillMaxWidth()
+                                                .fillMaxSize()
                                                 .border(2.5.dp, Color(0xFF1A162B), shape = RoundedCornerShape(8.dp)),
                                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B5CF6)),
                                             shape = RoundedCornerShape(8.dp),
@@ -1173,7 +1173,9 @@ fun RecipeChip(label: String, status: RecipeStatus) {
             fontSize = 7.sp,
             fontWeight = FontWeight.Black,
             fontFamily = FontFamily.Monospace,
-            color = textColor
+            color = textColor,
+            maxLines = 1,
+            softWrap = false
         )
     }
 }
