@@ -163,46 +163,7 @@ fun SettingsScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
 
-            // Game mechanics toggles
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(DarkSurface, shape = RoundedCornerShape(12.dp))
-                    .border(1.dp, BorderMetal, shape = RoundedCornerShape(12.dp))
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                Text(
-                    text = "HAPTICS & SPECIAL EFFECTS",
-                    fontSize = 10.sp,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold,
-                    color = TextSecondary
-                )
-
-                ToggleItem(
-                    label = "Haptic Feedback",
-                    desc = "Vibrates device on espresso pull or counter spill",
-                    checked = gameState.settings.hapticFeedback,
-                    onToggle = { gameState.toggleSetting("haptic") }
-                )
-
-                ToggleItem(
-                    label = "Screen Shake",
-                    desc = "Shakes camera when incoming trains roll in",
-                    checked = gameState.settings.screenShake,
-                    onToggle = { gameState.toggleSetting("shake") }
-                )
-
-                ToggleItem(
-                    label = "Rush Red Flashes",
-                    desc = "Flashes warning bezel when in rush hour",
-                    checked = gameState.settings.rushFlashes,
-                    onToggle = { gameState.toggleSetting("rush") }
-                )
-            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
