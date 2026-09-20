@@ -144,39 +144,11 @@ function initDownloadButtons() {
   ].filter(Boolean);
 
   downloadButtons.forEach(btn => {
-    btn.addEventListener('click', async (e) => {
+    btn.addEventListener('click', (e) => {
       const href = btn.getAttribute('href');
-      // If it is a local relative URL, handle it via Blob downloading to guarantee security cookies are sent!
-      if (href && (href.startsWith('/') || href.includes(window.location.hostname)) && href.endsWith('.apk')) {
-        e.preventDefault();
-        showToast('Initiating secure session download...', '🔒');
-        
-        try {
-          const response = await fetch(href);
-          if (!response.ok) throw new Error(`HTTP status ${response.status}`);
-          
-          showToast('Downloading APK binary...', '📶');
-          const blob = await response.blob();
-          const blobUrl = window.URL.createObjectURL(blob);
-          
-          const a = document.createElement('a');
-          a.style.display = 'none';
-          a.href = blobUrl;
-          a.download = href.split('/').pop() || 'EspressoExpress.apk';
-          document.body.appendChild(a);
-          a.click();
-          
-          setTimeout(() => {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(blobUrl);
-            showToast('Download complete!', '✅');
-          }, 100);
-        } catch (error) {
-          console.error("Secure fetch download failed, falling back to direct anchor stream.", error);
-          showToast('Direct stream fallback initiated...', '⚠️');
-          // Fallback to letting the browser handle the navigation directly
-          window.location.href = href;
-        }
+      if (href && href.endsWith('.apk')) {
+        showToast('Initiating direct APK download...', '📥');
+        // Let the browser handle the streaming download natively via the anchor's href and download attributes.
       } else {
         showToast('Initiating update download...', '📦');
       }
@@ -243,7 +215,7 @@ function isVersionNewer(newVer, currentVer) {
 
 async function fetchLatestRelease() {
   let downloadUrl = "/downloads/EspressoExpress.apk";
-  let version = "1.1.6";
+  let version = "1.1.7";
 
   // Try to find the local version.json first to be accurate to local deployments
   try {
