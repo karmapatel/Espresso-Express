@@ -331,7 +331,12 @@ class GameState(
     }
 
     private fun spawnOrder() {
-        val archetype = COMMUTER_ARCHETYPES.random()
+        val activeDrinkIds = activeOrders.map { it.drinkId }.toSet()
+        val activeCustomerNames = activeOrders.map { it.customerName }.toSet()
+
+        // Filter out archetypes already on the screen to avoid repeating customers
+        val availableArchetypes = COMMUTER_ARCHETYPES.filter { !activeCustomerNames.contains(it.name) }
+        val archetype = if (availableArchetypes.isNotEmpty()) availableArchetypes.random() else COMMUTER_ARCHETYPES.random()
         
         val availableRecipes = DRINK_RECIPES.filter { recipe ->
             val hasOatUnlock = unlockedEquipment.contains("OatMilk")
@@ -344,7 +349,15 @@ class GameState(
             milkOk && syrupOk
         }
 
-        val chosenRecipe = if (availableRecipes.isNotEmpty()) availableRecipes.random() else DRINK_RECIPES.first()
+        // Filter out recipes already active on screen to ensure maximum order variety
+        val diverseRecipes = availableRecipes.filter { !activeDrinkIds.contains(it.id) }
+        val chosenRecipe = if (diverseRecipes.isNotEmpty()) {
+            diverseRecipes.random()
+        } else if (availableRecipes.isNotEmpty()) {
+            availableRecipes.random()
+        } else {
+            DRINK_RECIPES.first()
+        }
 
         val syrupLabel = if (chosenRecipe.syrupFlavor == "None") "None" else "${chosenRecipe.syrupFlavor} (${chosenRecipe.syrupPumps}x)"
         

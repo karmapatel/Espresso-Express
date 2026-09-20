@@ -11,8 +11,8 @@ android {
         applicationId = "com.espressoexpress.arcade"
         minSdk = 26
         targetSdk = 34
-        versionCode = 118
-        versionName = "1.1.8"
+        versionCode = 119
+        versionName = "1.1.9"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
