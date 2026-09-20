@@ -676,10 +676,24 @@ fun GameScreen(
                         )
 
                         // Ice Badge
-                        val iceMatches = currentSelectedOrder.hasIce == (gameState.workbench.iceScoops > 0)
+                        val iceMatches = gameState.workbench.iceScoops == currentSelectedOrder.iceCount
+                        val iceLabelText = if (currentSelectedOrder.iceCount == 0) {
+                            "ICE: NO"
+                        } else {
+                            "ICE: ${gameState.workbench.iceScoops}/${currentSelectedOrder.iceCount} SCOOPS"
+                        }
+                        val iceStatus = if (iceMatches) {
+                            RecipeStatus.MATCHED
+                        } else if (gameState.workbench.iceScoops == 0) {
+                            RecipeStatus.PENDING
+                        } else if (gameState.workbench.iceScoops < currentSelectedOrder.iceCount) {
+                            RecipeStatus.PENDING
+                        } else {
+                            RecipeStatus.FAILED
+                        }
                         RecipeChip(
-                            label = if (currentSelectedOrder.hasIce) "ICE: YES" else "ICE: NO",
-                            status = if (iceMatches) RecipeStatus.MATCHED else RecipeStatus.PENDING
+                            label = iceLabelText,
+                            status = iceStatus
                         )
                     }
                     Box(modifier = Modifier.fillMaxWidth().height(2.dp).background(Color(0xFF1A162B)))
@@ -822,7 +836,7 @@ fun GameScreen(
                             }
                             Box(modifier = Modifier.weight(1f)) {
                                 Button(
-                                    onClick = { gameState.workbench.milkType = "Water" },
+                                    onClick = { gameState.addWater() },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .height(30.dp)

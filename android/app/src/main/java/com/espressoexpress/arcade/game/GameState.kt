@@ -351,16 +351,26 @@ class GameState(
         val hasCustomerTip = Random.nextFloat() < 0.52f
         val customerTip = if (hasCustomerTip) listOf(1.00, 1.25, 1.50, 1.75, 2.00, 2.50).random() else 0.00
 
+        val finalIceCount = if (chosenRecipe.iceCount > 0) {
+            Random.nextInt(1, 4) // 1x, 2x, or 3x ice scoops
+        } else {
+            0
+        }
+
         var note = archetype.notes
         var prepText = chosenRecipe.prepDescription
-        if (chosenRecipe.iceCount > 0) {
-            val iceText = when (chosenRecipe.iceCount) {
+        if (finalIceCount > 0) {
+            val iceText = when (finalIceCount) {
                 1 -> "Light Ice (1x Scoop)"
                 2 -> "Regular Ice (2x Scoops)"
                 else -> "Extra Ice (3x Scoops)"
             }
             note = "$note Please add $iceText!"
-            prepText = "$iceText + $prepText"
+            prepText = if (prepText.startsWith("Ice + ")) {
+                "$iceText + ${prepText.substring("Ice + ".length)}"
+            } else {
+                "$iceText + $prepText"
+            }
         }
 
         val ticket = OrderTicket(
@@ -377,8 +387,8 @@ class GameState(
             syrup = syrupLabel,
             syrupFlavor = chosenRecipe.syrupFlavor,
             syrupPumps = chosenRecipe.syrupPumps,
-            iceCount = chosenRecipe.iceCount,
-            hasIce = chosenRecipe.iceCount > 0,
+            iceCount = finalIceCount,
+            hasIce = finalIceCount > 0,
             hasWater = chosenRecipe.hasWater,
             price = chosenRecipe.basePrice,
             tipBonus = customerTip,
@@ -430,7 +440,23 @@ class GameState(
             triggerToast("⚠️ Grab a cup first!", "🥤")
             return
         }
+        if (workbench.milkType != "None") {
+            triggerToast("⚠️ A liquid is already added! Dump drink to restart.", "🥛")
+            return
+        }
         workbench.milkType = milk
+    }
+
+    fun addWater() {
+        if (workbench.currentCupSize == "None") {
+            triggerToast("⚠️ Grab a cup first!", "🥤")
+            return
+        }
+        if (workbench.milkType != "None") {
+            triggerToast("⚠️ A liquid is already added! Dump drink to restart.", "🥛")
+            return
+        }
+        workbench.milkType = "Water"
     }
 
     fun frothMilk() {
