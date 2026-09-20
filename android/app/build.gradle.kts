@@ -11,8 +11,8 @@ android {
         applicationId = "com.espressoexpress.arcade"
         minSdk = 26
         targetSdk = 34
-        versionCode = 115
-        versionName = "1.1.5"
+        versionCode = 116
+        versionName = "1.1.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -20,13 +20,44 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            val keystorePath = System.getenv("RELEASE_KEYSTORE_PATH") ?: ""
+            val keystorePasswordEnv = System.getenv("RELEASE_KEYSTORE_PASSWORD") ?: ""
+            val keyAliasEnv = System.getenv("RELEASE_KEY_ALIAS") ?: ""
+            val keyPasswordEnv = System.getenv("RELEASE_KEY_PASSWORD") ?: ""
+
+            if (keystorePath.isNotEmpty() && file(keystorePath).exists()) {
+                storeFile = file(keystorePath)
+                storePassword = keystorePasswordEnv
+                keyAlias = keyAliasEnv
+                keyPassword = keyPasswordEnv
+            } else if (file("release.jks").exists()) {
+                storeFile = file("release.jks")
+                storePassword = keystorePasswordEnv
+                keyAlias = keyAliasEnv
+                keyPassword = keyPasswordEnv
+            } else {
+                val debugConfig = signingConfigs.getByName("debug")
+                storeFile = debugConfig.storeFile
+                storePassword = debugConfig.storePassword
+                keyAlias = debugConfig.keyAlias
+                keyPassword = debugConfig.keyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

@@ -16,6 +16,12 @@ node_modules
 dist
 dist-ssr
 
+# Android signing keys
+*.jks
+*.keystore
+release.jks
+debug.keystore
+
 # Local env files
 .env
 .env.local

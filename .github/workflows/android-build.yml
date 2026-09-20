@@ -45,9 +45,24 @@ jobs:
         run: chmod +x gradlew
         working-directory: android
 
+      - name: Decode Keystore
+        run: |
+          if [ -n "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" ]; then
+            echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 --decode > app/release.jks
+            echo "Successfully restored persistent release key."
+          else
+            echo "No persistent key secret provided; relying on local fallback key."
+          fi
+        working-directory: android
+
       - name: Build Debug APK with Gradle
         run: ./gradlew assembleDebug --no-daemon
         working-directory: android
+        env:
+          RELEASE_KEYSTORE_PATH: "release.jks"
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
 
       - name: Find and Verify APK Output
         run: |
@@ -76,12 +91,12 @@ jobs:
           LATEST_TAG=$(git tag -l "v*" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n1 || echo "")
           echo "Latest tag found: $LATEST_TAG"
           if [ -z "$LATEST_TAG" ]; then
-            NEW_TAG="v1.1.5"
+            NEW_TAG="v1.1.6"
           else
             VERSION=${LATEST_TAG#v}
             IFS='.' read -r major minor patch <<< "$VERSION"
             if [ "$major" -eq 1 ] && [ "$minor" -eq 0 ]; then
-              NEW_TAG="v1.1.5"
+              NEW_TAG="v1.1.6"
             else
               NEW_PATCH=$((patch + 1))
               NEW_TAG="v${major}.${minor}.${NEW_PATCH}"

@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/karmapatel/Espresso-Express/releases"><img src="https://img.shields.io/badge/Release-v1.1.5-brightgreen?style=for-the-badge&logo=github" alt="Current Release" /></a>
+  <a href="https://github.com/karmapatel/Espresso-Express/releases"><img src="https://img.shields.io/badge/Release-v1.1.6-brightgreen?style=for-the-badge&logo=github" alt="Current Release" /></a>
   <img src="https://img.shields.io/badge/Platform-Android%20%7C%20Web-blue?style=for-the-badge&logo=android" alt="Supported Platforms" />
   <img src="https://img.shields.io/badge/Build-Passing-success?style=for-the-badge&logo=github-actions" alt="Build Status" />
   <img src="https://img.shields.io/badge/License-MIT-orange?style=for-the-badge" alt="License" />
@@ -13,7 +13,7 @@
 
 ---
 
-### 📢 What's New in v1.1.5
+### 📢 What's New in v1.1.6
 * **⚡ Instant In-App Automatic Downloads**: No more hunting on releases list pages! The update engine triggers background downloads immediately to retrieve the latest version cleanly.
 * **🔒 Secure & Seamless Upgrades**: Integrates a client-side update framework that auto-detects the active repository structure to prevent installation downgrades.
 * **📱 High-Fidelity Mobile Simulation**: Custom touch controls optimized for native Android devices alongside a visual status bar and navigation indicators.
